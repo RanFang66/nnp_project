@@ -20,10 +20,10 @@
 //          which does not include the PieVectorTable structure.
 //
 //###########################################################################
-// $TI Release: F2833x Support Library v2.01.00.00 $
-// $Release Date: Sun Oct  4 16:07:01 IST 2020 $
+// $TI Release: F2833x Support Library v2.02.00.00 $
+// $Release Date: Fri Feb 12 19:15:21 IST 2021 $
 // $Copyright:
-// Copyright (C) 2009-2020 Texas Instruments Incorporated - http://www.ti.com/
+// Copyright (C) 2009-2021 Texas Instruments Incorporated - http://www.ti.com/
 //
 // Redistribution and use in source and binary forms, with or without 
 // modification, are permitted provided that the following conditions 

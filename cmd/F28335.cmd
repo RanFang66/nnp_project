@@ -8,10 +8,10 @@
 // TITLE:	Linker Command File For F28335 Device
 //
 //###########################################################################
-// $TI Release: F2833x Support Library v2.01.00.00 $
-// $Release Date: Sun Oct  4 16:07:01 IST 2020 $
+// $TI Release: F2833x Support Library v2.02.00.00 $
+// $Release Date: Fri Feb 12 19:15:21 IST 2021 $
 // $Copyright:
-// Copyright (C) 2009-2020 Texas Instruments Incorporated - http://www.ti.com/
+// Copyright (C) 2009-2021 Texas Instruments Incorporated - http://www.ti.com/
 //
 // Redistribution and use in source and binary forms, with or without 
 // modification, are permitted provided that the following conditions 
@@ -162,13 +162,25 @@ SECTIONS
    .pinit              : > FLASHA,     PAGE = 0
    .text               : > FLASHA      PAGE = 0
    codestart           : > BEGIN       PAGE = 0
-   ramfuncs            : LOAD = FLASHD, 
+#ifdef __TI_COMPILER_VERSION__
+    #if __TI_COMPILER_VERSION__ >= 15009000
+        .TI.ramfunc : {} LOAD = FLASHD,
+                         RUN = RAML0,
+                         LOAD_START(_RamfuncsLoadStart),
+                         LOAD_END(_RamfuncsLoadEnd),
+                         RUN_START(_RamfuncsRunStart),
+                         LOAD_SIZE(_RamfuncsLoadSize),
+                         PAGE = 0
+    #else
+        ramfuncs       : LOAD = FLASHD, 
                          RUN = RAML0, 
                          LOAD_START(_RamfuncsLoadStart),
                          LOAD_END(_RamfuncsLoadEnd),
                          RUN_START(_RamfuncsRunStart),
                          LOAD_SIZE(_RamfuncsLoadSize),
                          PAGE = 0
+    #endif
+#endif
 
    csmpasswds          : > CSM_PWL     PAGE = 0
    csm_rsvd            : > CSM_RSVD    PAGE = 0
