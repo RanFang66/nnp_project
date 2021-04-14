@@ -101,11 +101,6 @@ InitGpio(void)
     EDIS;
 }	
 
-#define GPIO_QSEL_SUPPORT_MAX			64
-#define GPIO_MUX_REG(GROUP, NUM)		&GpioCtrlRegs.GP##GROUP##MUX##NUM.all
-#define	GPIO_DIR_REG(GROUP) 			&GpioCtrlRegs.GP##GROUP##DIR.all
-#define GPIO_QSEL_REG(GROUP, NUM)		&GpioCtrlRegs.GP##GROUP##QSEL##NUM.all
-#define GPIO_PUD_REG(GROUP)				&GpioCtrlRegs.GP##GROUP##PUD.all
 
 /*
 *********************************************************************************************************
@@ -148,45 +143,46 @@ ConfigGpio(Uint16 GpioNum, Gpio_Mode_Type GpioMode, Uint16 PullUpEn, Gpio_QSel_T
 	Uint16 shift1 = GpioNum % 32;
 	Uint16 shift2 = GpioNum % 16 * 2;
 	
+	EALLOW;
 	switch (GpioGrp) {
 	case 0:
-		GpioMux = GPIO_MUX_REG(A, 1);
-		GpioDir = GPIO_DIR_REG(A);
-		GpioQSel = GPIO_QSEL_REG(A, 1);
-		GpioPud = GPIO_PUD_REG(A);
+		GpioMux = GPIO_MUX_REG_ADDR(A, 1);
+		GpioDir = GPIO_DIR_REG_ADDR(A);
+		GpioQSel = GPIO_QSEL_REG_ADDR(A, 1);
+		GpioPud = GPIO_PUD_REG_ADDR(A);
 		break;
 
 	case 1:
-		GpioMux = GPIO_MUX_REG(A, 2);
-		GpioDir = GPIO_DIR_REG(A);
-		GpioQSel = GPIO_QSEL_REG(A, 2);
-		GpioPud = GPIO_PUD_REG(A);
+		GpioMux = GPIO_MUX_REG_ADDR(A, 2);
+		GpioDir = GPIO_DIR_REG_ADDR(A);
+		GpioQSel = GPIO_QSEL_REG_ADDR(A, 2);
+		GpioPud = GPIO_PUD_REG_ADDR(A);
 		break;
 
 	case 2:
-		GpioMux = GPIO_MUX_REG(B, 1);
-		GpioDir = GPIO_DIR_REG(B);
-		GpioQSel = GPIO_QSEL_REG(B, 1);
-		GpioPud = GPIO_PUD_REG(B);
+		GpioMux = GPIO_MUX_REG_ADDR(B, 1);
+		GpioDir = GPIO_DIR_REG_ADDR(B);
+		GpioQSel = GPIO_QSEL_REG_ADDR(B, 1);
+		GpioPud = GPIO_PUD_REG_ADDR(B);
 		break;
 
 	case 3:
-		GpioMux = GPIO_MUX_REG(B, 2);
-		GpioDir = GPIO_DIR_REG(B);
-		GpioQSel = GPIO_QSEL_REG(B, 2);
-		GpioPud = GPIO_PUD_REG(B);
+		GpioMux = GPIO_MUX_REG_ADDR(B, 2);
+		GpioDir = GPIO_DIR_REG_ADDR(B);
+		GpioQSel = GPIO_QSEL_REG_ADDR(B, 2);
+		GpioPud = GPIO_PUD_REG_ADDR(B);
 		break;
 
 	case 4:
-		GpioMux = GPIO_MUX_REG(C, 1);
-		GpioDir = GPIO_DIR_REG(C);
-		GpioPud = GPIO_PUD_REG(C);
+		GpioMux = GPIO_MUX_REG_ADDR(C, 1);
+		GpioDir = GPIO_DIR_REG_ADDR(C);
+		GpioPud = GPIO_PUD_REG_ADDR(C);
 		break;
 
 	case 5:
-		GpioMux = GPIO_MUX_REG(C, 2);
-		GpioDir = GPIO_DIR_REG(C);
-		GpioPud = GPIO_PUD_REG(C);
+		GpioMux = GPIO_MUX_REG_ADDR(C, 2);
+		GpioDir = GPIO_DIR_REG_ADDR(C);
+		GpioPud = GPIO_PUD_REG_ADDR(C);
 		break;
 
 	default:
@@ -197,7 +193,6 @@ ConfigGpio(Uint16 GpioNum, Gpio_Mode_Type GpioMode, Uint16 PullUpEn, Gpio_QSel_T
 		return GPIO_INVALID_NUM;
 		break;
 	}
-
 
 	switch (GpioMode) {
 	case GPIO_NOUSE:
@@ -250,6 +245,7 @@ ConfigGpio(Uint16 GpioNum, Gpio_Mode_Type GpioMode, Uint16 PullUpEn, Gpio_QSel_T
 	} else {
 		*GpioPud |= (Uint32)1 << shift1;
 	}
+	EDIS;
 
 	return GPIO_NO_ERR;
 }

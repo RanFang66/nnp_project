@@ -20,8 +20,10 @@ static void InitPIE(void);
 
 void InitDSP2833x(void)
 {
-	InitSysCtrl(DSP28_PLLCR, DSP28_DIVSEL);
+	InitSysCtrl(DSP28_PLLCR, DSP28_DIVSEL, HISP_PRE_DIV, LOSP_PRE_DIV);
 	InitGpio();
+	InitWatchDog(WATCHDOG_CLK_DIV, 0);
+
 
 	EDIS;
 	InitPIE();

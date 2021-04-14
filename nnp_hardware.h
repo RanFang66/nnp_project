@@ -20,9 +20,25 @@
 extern "C" {
 #endif
 
-#define LED_LIGHT	GpioDataRegs.GPBSET.bit.GPIO37 = 1
-#define LED_OFF		GpioDataRegs.GPBCLEAR.bit.GPIO37 = 1
-#define LED_TOGGLE	GpioDataRegs.GPBTOGGLE.bit.GPIO37 = 1
+#define LED_GPIO		35
+
+#define LED_OFF()		do { \
+							EALLOW; \
+							GpioDataRegs.GPBSET.bit.GPIO35 = 1; \
+							EDIS; \
+						}while (0);
+
+#define LED_ON()		do { \
+							EALLOW; \
+							GpioDataRegs.GPBCLEAR.bit.GPIO35 = 1; \
+							EDIS; \
+						}while (0);
+
+#define LED_TOGGLE()	do { \
+							EALLOW; \
+							GpioDataRegs.GPBTOGGLE.bit.GPIO35= 1; \
+							EDIS; \
+						}while (0);
 
 #ifdef __cplusplus
 }

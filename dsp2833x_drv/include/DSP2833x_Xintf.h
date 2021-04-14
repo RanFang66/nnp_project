@@ -142,6 +142,12 @@ struct XINTF_REGS {
 //
 extern volatile struct XINTF_REGS XintfRegs;
 
+
+// function declaration
+extern void InitXintf(void);
+
+
+
 #ifdef __cplusplus
 }
 #endif /* extern "C" */

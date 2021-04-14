@@ -42,6 +42,19 @@ extern "C" {
 //#define DSP28_PLLCR    1
 //#define DSP28_PLLCR    0  // PLL is bypassed in this mode
 
+
+// High speed peripheral clock prescale value definition
+#define HISP_PRE_DIV		0x0001
+
+// Low speed peripheral clock prescale value definition
+#define LOSP_PRE_DIV		0x0002
+
+// Watch dog clock prescaler set
+#define WATCHDOG_CLK_DIV	0x111
+
+
+
+
 //
 // Specify the clock rate of the CPU (SYSCLKOUT) in nS.
 //

@@ -482,6 +482,17 @@ extern volatile struct GPIO_DATA_REGS GpioDataRegs;
 extern volatile struct GPIO_INT_REGS GpioIntRegs;
 
 
+#define GPIO_QSEL_SUPPORT_MAX				64
+#define GPIO_MUX_REG_ADDR(GROUP, NUM)		&GpioCtrlRegs.GP##GROUP##MUX##NUM.all
+#define	GPIO_DIR_REG_ADDR(GROUP) 			&GpioCtrlRegs.GP##GROUP##DIR.all
+#define GPIO_QSEL_REG_ADDR(GROUP, NUM)		&GpioCtrlRegs.GP##GROUP##QSEL##NUM.all
+#define GPIO_PUD_REG_ADDR(GROUP)			&GpioCtrlRegs.GP##GROUP##PUD.all
+
+#define GPIO_DAT_VALUE(GROUP, NUM)			GpioDataRegs.GP##GROUP##DAT.bit.GPIO##NUM
+#define GPIO_SET(GROUP, NUM)			    GpioDataRegs.GP##GROUP##SET.bit.GPIO##NUM = 1
+#define GPIO_CLEAR(GROUP, NUM)		        GpioDataRegs.GP##GROUP##CLEAR.bit.GPIO##NUM = 1
+#define GPIO_TOGGLE(GROUP, NUM)				GpioDataRegs.GP##GROUP##TOGGLE.bit.GPIO##NUM
+
 typedef enum {
 	GPIO_NOUSE,
 	GPIO_IO_INPUT,
@@ -490,6 +501,11 @@ typedef enum {
 	GPIO_FUNC_MUX2,
 	GPIO_FUNC_MUX3,
 } Gpio_Mode_Type;
+
+typedef enum {
+	GPIO_PULLUP_EN,
+	GPIO_PULLUP_DIS
+} Gpio_PullUp_Type;
 
 typedef enum {
 	GPIO_SYNC_SYSCLK,
@@ -508,7 +524,7 @@ typedef enum {
  * function declaration
  */
 extern void InitGpio(void);
-extern Uint16 ConfigGpio(Uint16 GpioNum, Gpio_Mode_Type GpioMode, Uint16 PullUpEn, Gpio_QSel_Type QSel);
+extern Uint16 ConfigGpio(Uint16 GpioNum, Gpio_Mode_Type GpioMode, Gpio_PullUp_Type PullUpEn, Gpio_QSel_Type QSel);
 
 
 #ifdef __cplusplus

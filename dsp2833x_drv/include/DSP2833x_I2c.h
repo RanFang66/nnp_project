@@ -216,10 +216,60 @@ struct I2C_REGS {
     union  I2CFFRX_REG  I2CFFRX;            // Recieve FIFO
 };
 
+/** @defgroup I2C_Clock_in_khz
+  * @{
+  */
+#define I2C_CLK_400KHZ 	400
+#define I2C_CLK_200KHZ	200
+#define I2C_CLK_100KHZ	100
+#define I2C_CLK_80KHZ	80
+
+
+/** @defgroup I2C_FIFO_MODE
+  * @{
+  */
+#define I2C_FIFO_DIS            0x0000
+#define I2C_FIFO_EN             0x0001
+#define I2C_FIFO_TXINT_EN       0x0002
+#define I2C_FIFO_RXINT_EN       0x0004
+
+
+//
+// Interrupt Source Messages
+//
+#define I2C_NO_ISRC             0x0000
+#define I2C_ARB_ISRC            0x0001
+#define I2C_NACK_ISRC           0x0002
+#define I2C_ARDY_ISRC           0x0004
+#define I2C_RX_ISRC             0x0008
+#define I2C_TX_ISRC             0x0010
+#define I2C_SCD_ISRC            0x0020
+#define I2C_AAS_ISRC            0x0040
+
 //
 // External References & Function Declarations
 //
 extern volatile struct I2C_REGS I2caRegs;
+
+
+typedef struct I2C_DEV {
+	volatile struct I2C_REGS 	*RegBase;
+	Uint16						Clock_kHz;
+	Uint16						I2cMode;
+	Uint16						I2cIntSrc;
+	Uint16						I2cFifoMode;
+	Uint16						I2cRxFifoLevel;
+	Uint16						I2cTxFifoLevel;
+} I2c_Dev_Type;
+
+//
+// Function declaration
+//
+extern void InitI2C(I2c_Dev_Type *I2c);
+extern int16 I2cWrite(I2c_Dev_Type *I2c, Uint16 Addr, Uint16* Buffer, Uint16 Size);
+extern int16 I2cRead(I2c_Dev_Type *I2c, Uint16 Addr, Uint16* Buffer, Uint16 Size);
+
+
 
 #ifdef __cplusplus
 }

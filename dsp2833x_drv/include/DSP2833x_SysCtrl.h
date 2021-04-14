@@ -473,13 +473,15 @@ extern volatile struct CSM_PWL CsmPwl;
 extern volatile struct FLASH_REGS FlashRegs;
 
 // function declaration
-extern void InitSysCtrl(Uint16 MultiVal, Uint16 DivVal);
+extern void InitSysCtrl(Uint16 SysClkPreMulti, Uint16 SysClkPreDiv, Uint16 HispClkDiv, Uint16 LospClkDiv);
 extern void InitFlash(void);
+extern void InitWatchDog(Uint16 preScale, Uint16 WDIntEn);
+extern void EnableDog(Uint16 preScale);
 extern void ServiceDog(void);
 extern void DisableDog(void);
 extern Uint16 CsmUnlock(void);
 extern void InitPll(Uint16 val, Uint16 divsel);
-extern void InitPeripheralClocks(void);
+extern void InitPeripheralClocks(Uint16 HispClkDiv, Uint16 LospClkDiv);
 
 #ifdef __cplusplus
 }

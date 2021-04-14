@@ -13,7 +13,6 @@
 *********************************************************************************************************
 */
 
-#include  <app_cfg.h>
 #include  <ucos_ii.h>
 #include  <cpu_core.h>
 #include  <lib_def.h>
@@ -22,11 +21,10 @@
 #include "nnp_project.h"
 
 
-CPU_STK_SIZE  		TaskStartStk[APP_CFG_TASK_STK_SIZE];
-CPU_STK_SIZE		TaskPendStk[APP_CFG_TASK_STK_SIZE];
-CPU_STK_SIZE		TaskPostStk[APP_CFG_TASK_STK_SIZE];
+CPU_STK_SIZE  		TaskStartStk[TASK_STK_SIZE];
+CPU_STK_SIZE		TaskPendStk[TASK_STK_SIZE];
+CPU_STK_SIZE		TaskPostStk[TASK_STK_SIZE];
 
-static  OS_EVENT    *TaskObjSem;
 static  INT8U		OsErr;
 
 static void TaskStart(void  *p_arg);
@@ -40,10 +38,10 @@ int main(void)
 	OSTaskCreateExt(TaskStart,
 				   (void    *)0,
 				   (CPU_STK *)&TaskStartStk[0],
-				   (INT8U    )APP_CFG_TASK_START_PRIO,
-				   (INT16U   )APP_CFG_TASK_START_PRIO,
-				   (CPU_STK *)&TaskStartStk[APP_CFG_TASK_STK_SIZE - 1u],
-				   (INT32U   )APP_CFG_TASK_STK_SIZE,
+				   (INT8U    )TASK_START_PRIO,
+				   (INT16U   )TASK_START_PRIO,
+				   (CPU_STK *)&TaskStartStk[TASK_STK_SIZE - 1u],
+				   (INT32U   )TASK_STK_SIZE,
 				   (void    *)0,
 				   (INT16U   )(OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR));
 	OSStart();
@@ -52,7 +50,7 @@ int main(void)
 
 static void TaskStart(void *p_arg)
 {
-	ConfigGpio(37, GPIO_IO_OUTPUT, 1, GPIO_SYNC_SYSCLK);
+	ConfigGpio(LED_GPIO, GPIO_IO_OUTPUT, GPIO_PULLUP_EN, GPIO_SYNC_SYSCLK);
 	ConfigCpuTimer(&CpuTimer0, 60, 1000);
 	StartCpuTimer0();
 
@@ -61,19 +59,19 @@ static void TaskStart(void *p_arg)
 	OSTaskCreateExt(TaskPing,
 	                    (void    *)0,
 	                    (CPU_STK *)&TaskPendStk[0],
-	                    (INT8U    )APP_CFG_TASK_PEND_PRIO,
-	                    (INT16U   )APP_CFG_TASK_PEND_PRIO,
-	                    (CPU_STK *)&TaskPendStk[APP_CFG_TASK_STK_SIZE - 1u],
-	                    (INT32U   )APP_CFG_TASK_STK_SIZE,
+	                    (INT8U    )TASK_PEND_PRIO,
+	                    (INT16U   )TASK_PEND_PRIO,
+	                    (CPU_STK *)&TaskPendStk[TASK_STK_SIZE - 1u],
+	                    (INT32U   )TASK_STK_SIZE,
 	                    (void    *)0,
 	                    (INT16U   )(OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR));
 	OSTaskCreateExt(TaskPong,
 					(void    *)0,
 					(CPU_STK *)&TaskPostStk[0],
-					(INT8U    )APP_CFG_TASK_POST_PRIO,
-					(INT16U   )APP_CFG_TASK_POST_PRIO,
-					(CPU_STK *)&TaskPostStk[APP_CFG_TASK_STK_SIZE - 1u],
-					(INT32U   )APP_CFG_TASK_STK_SIZE,
+					(INT8U    )TASK_POST_PRIO,
+					(INT16U   )TASK_POST_PRIO,
+					(CPU_STK *)&TaskPostStk[TASK_STK_SIZE - 1u],
+					(INT32U   )TASK_STK_SIZE,
 					(void    *)0,
 					(INT16U   )(OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR));
 
@@ -88,8 +86,8 @@ static void TaskPing(void *p_arg)
 
 	while (1) {
 		PingCnt++;
-		LED_LIGHT;
-		OsErr = OSTimeDlyHMSM(0, 0, 1, 0);
+		LED_ON();
+		OsErr = OSTimeDlyHMSM(0, 0, 5, 0);
 	}
 }
 
@@ -98,7 +96,7 @@ static void TaskPong(void *p_arg)
 	static INT8U PongCnt = 0;
 	while(1) {
 		PongCnt++;
-		LED_OFF;
-		OsErr = OSTimeDlyHMSM(0, 0, 1, 0);
+		LED_OFF();
+		OsErr = OSTimeDlyHMSM(0, 0, 5, 0);
 	}
 }

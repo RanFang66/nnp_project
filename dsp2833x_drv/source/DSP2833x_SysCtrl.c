@@ -71,7 +71,7 @@
 // - Enable the clocks to the peripherals
 //
 void 
-InitSysCtrl(Uint16 MultiVal, Uint16 DivVal)
+InitSysCtrl(Uint16 SysClkPreMulti, Uint16 SysClkPreDiv, Uint16 HispClkDiv, Uint16 LospClkDiv)
 {
     //
     // Disable the watchdog
@@ -82,12 +82,12 @@ InitSysCtrl(Uint16 MultiVal, Uint16 DivVal)
     // Initialize the PLL control: PLLCR and DIVSEL
     // DSP28_PLLCR and DSP28_DIVSEL are defined in DSP2833x_Examples.h
     //
-    InitPll(MultiVal, DivVal);
+    InitPll(SysClkPreMulti, SysClkPreDiv);
 
     //
     // Initialize the peripheral clocks
     //
-    InitPeripheralClocks();
+    InitPeripheralClocks(HispClkDiv, LospClkDiv);
 }
 
 //
@@ -162,11 +162,12 @@ InitFlash(void)
 }
 
 void
-InitWatchDog(void)
+InitWatchDog(Uint16 preScale, Uint16 WDIntEn)
 {
 	EALLOW;						// Enable EALLOW protected register access
 
 	SysCtrlRegs.WDCR = 0x00E8;
+	SysCtrlRegs.WDCR |= preScale;
 // bit 15-8      0's:    reserved
 // bit 7         1:      WDFLAG, write 1 to clear
 // bit 6         1:      WDDIS, 1=disable WD
@@ -174,6 +175,7 @@ InitWatchDog(void)
 // bit 2-0       000:    WDPS, WD prescale bits, 000: WDCLK=OSCCLK/512/1
 
 	SysCtrlRegs.SCSR = 0x0000;
+	SysCtrlRegs.SCSR |= WDIntEn < 1;
 // bit 15-3      0's:    reserved
 // bit 2         0:      WDINTS, WD interrupt status bit (read-only)
 // bit 1         0:      WDENINT, 0=WD causes reset, 1=WD causes WDINT
@@ -183,10 +185,11 @@ InitWatchDog(void)
 }
 
 void
-EnableDog(void)
+EnableDog(Uint16 preScale)
 {
     EALLOW;
-    SysCtrlRegs.WDCR= 0x002F;
+    SysCtrlRegs.WDCR = 0x0028;
+    SysCtrlRegs.WDCR |= preScale;
     EDIS;
 }
 
@@ -337,7 +340,7 @@ InitPll(Uint16 val, Uint16 divsel)
 // read or write to the registers for that peripheral
 //
 void 
-InitPeripheralClocks(void)
+InitPeripheralClocks(Uint16 HispClkDiv, Uint16 LospClkDiv)
 {
     EALLOW;
 
@@ -345,8 +348,8 @@ InitPeripheralClocks(void)
     // HISPCP/LOSPCP prescale register settings, normally it will be set to 
     // default values
     //
-    SysCtrlRegs.HISPCP.all = 0x0001;
-    SysCtrlRegs.LOSPCP.all = 0x0002;
+    SysCtrlRegs.HISPCP.all = HispClkDiv;
+    SysCtrlRegs.LOSPCP.all = LospClkDiv;
 
     //
     // XCLKOUT to SYSCLKOUT ratio.  By default XCLKOUT = 1/4 SYSCLKOUT

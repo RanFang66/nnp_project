@@ -22,6 +22,7 @@
 #include "nnp_hardware.h"
 #include "nnp_init.h"
 #include "nnp_isr.h"
+#include "nnp_task_cfg.h"
 
 #ifdef __cplusplus
 extern "C" {
