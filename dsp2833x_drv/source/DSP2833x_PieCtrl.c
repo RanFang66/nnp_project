@@ -119,6 +119,74 @@ EnableInterrupts()
     EINT;
 }
 
+#define IRQ_CONFIG_OK			0
+#define IRQ_GROUP_INVALID		1
+#define IRQ_ID_INVALID			2
+
+
+int16
+EnCpuIntSrc(Uint16 IrqId)
+{
+	if (IrqId <= CPU_INT_RTOSINT && IrqId != 0) {
+		IER |= (1u << (IrqId - 1));
+		return IRQ_CONFIG_OK;
+	}else {
+		return -IRQ_ID_INVALID;
+	}
+}
+
+int16
+DisCpuIntSrc(Uint16 IrqId)
+{
+	if (IrqId <= CPU_INT_RTOSINT && IrqId != 0) {
+		IER &= ~(1u << (IrqId - 1));
+		return IRQ_CONFIG_OK;
+	} else {
+		return -IRQ_ID_INVALID;
+	}
+}
+
+int16
+EnPieIntSrc(Uint16 IrqGrp, Uint16 IrqIndex)
+{
+	union PIEIER_REG *PieEnReg = (void*)&PieCtrlRegs;
+
+	if (IrqGrp < 1 || IrqGrp > 12) {
+		return -IRQ_GROUP_INVALID;
+	}
+
+	if (IrqIndex < 1 || IrqIndex > 8) {
+		return -IRQ_ID_INVALID;
+	}
+
+	PieEnReg += 2 * IrqGrp;
+	PieEnReg->all |= (1u < (IrqIndex-1));
+
+	return IRQ_CONFIG_OK;
+}
+
+
+int16
+DisPieIntSrc(Uint16 IrqGrp, Uint16 IrqIndex)
+{
+	union PIEIER_REG *PieEnReg = (void*)&PieCtrlRegs;
+
+	if (IrqGrp < 1 || IrqGrp > 12) {
+		return -IRQ_GROUP_INVALID;
+	}
+
+	if (IrqIndex < 1 || IrqIndex > 8) {
+		return -IRQ_ID_INVALID;
+	}
+
+	PieEnReg += 2 * IrqGrp;
+	PieEnReg->all &= ~(1u < (IrqIndex-1));
+
+	return IRQ_CONFIG_OK;
+}
+
+
+
 //
 // End of file
 //

@@ -246,6 +246,19 @@ struct I2C_REGS {
 #define I2C_SCD_ISRC            0x0020
 #define I2C_AAS_ISRC            0x0040
 
+
+//
+// Error Messages
+//
+#define I2C_ERROR               0xFFFF
+#define I2C_ARB_LOST_ERROR      0x0001
+#define I2C_NACK_ERROR          0x0002
+#define I2C_BUS_BUSY_ERROR      0x1000
+#define I2C_STP_NOT_READY_ERROR 0x5555
+#define I2C_NO_FLAGS            0xAAAA
+#define I2C_SUCCESS             0x0000
+
+
 //
 // External References & Function Declarations
 //

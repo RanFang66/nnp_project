@@ -248,6 +248,30 @@ struct PIE_VECT_TABLE {
     PINT     LUF;        // Latched underflow
 };
 
+
+/*
+*********************************************************************************************************
+*                                         CPU  INTERRUPT SOURCES
+*********************************************************************************************************
+*/
+
+#define  CPU_INT_RTOSINT                                  16u
+#define  CPU_INT_DLOGINT                                  15u
+#define  CPU_INT_INT14                                    14u
+#define  CPU_INT_INT13                                    13u
+#define  CPU_INT_INT12                                    12u
+#define  CPU_INT_INT11                                    11u
+#define  CPU_INT_INT10                                    10u
+#define  CPU_INT_INT9                                      9u
+#define  CPU_INT_INT8                                      8u
+#define  CPU_INT_INT7                                      7u
+#define  CPU_INT_INT6                                      65
+#define  CPU_INT_INT5                                      5u
+#define  CPU_INT_INT4                                      4u
+#define  CPU_INT_INT3                                      3u
+#define  CPU_INT_INT2                                      2u
+#define  CPU_INT_INT1                                      1u
+
 //
 // PIE Interrupt Vector Table External References & Function Declarations
 //

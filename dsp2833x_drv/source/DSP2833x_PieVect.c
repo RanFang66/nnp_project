@@ -256,6 +256,27 @@ InitPieVectTable(void)
     PieCtrlRegs.PIECTRL.bit.ENPIE = 1;	
 }
 
+#define IRQ_REGISTER_SUCCESS	0
+#define IRQ_NUM_INVALID			1
+
+
+int16 PieIrqRegister(Uint16 IrqId, PINT IrqHandler)
+{
+	volatile Uint32 *IrqVectTbl = (void *)&PieVectTable;
+
+	if (IrqId >= 128 || IrqId < 13) {
+		return -IRQ_NUM_INVALID;
+	}
+	EALLOW;
+	*(IrqVectTbl+IrqId) = IrqHandler;
+	EDIS;
+
+	return IRQ_REGISTER_SUCCESS;
+}
+
+
+
+
 //
 // End of file
 //

@@ -152,7 +152,7 @@ int16 I2cWrite(I2c_Dev_Type *I2c, Uint16 Addr, Uint16* Buff, Uint16 Size)
 	//
 	for (i = 0; i < Size; i++)
 	{
-		I2caRegs.I2CDXR = *Buff[i];
+		I2caRegs.I2CDXR = *(Buff+i);
 	}
 
 	//
@@ -178,8 +178,16 @@ int16 I2cRead(I2c_Dev_Type *I2c, Uint16 Addr, Uint16* Buffer, Uint16 Size)
 
 	// Slave Address Set
 	I2c->RegBase->I2CSAR = Addr;
+	I2caRegs.I2CCNT = Size;				// Setup how many bytes to expect
 
+	if (I2c->RegBase->I2CSTR.bit.BB == 1)
+	{
+		return I2C_BUS_BUSY_ERROR;
+	}
 
+	I2caRegs.I2CMDR.all = 0x2C20;		// Send restart as master receiver
+
+	return Size;
 }
 
 //
