@@ -272,6 +272,10 @@ struct PIE_VECT_TABLE {
 #define  CPU_INT_INT2                                      2u
 #define  CPU_INT_INT1                                      1u
 
+
+
+#define ISR_REGISTER_SUCCESS	0
+#define ISR_NUM_INVALID			1
 //
 // PIE Interrupt Vector Table External References & Function Declarations
 //
@@ -280,6 +284,7 @@ extern volatile struct PIE_VECT_TABLE PieVectTable;
 
 // function declaration
 extern void InitPieVectTable(void);
+extern int16 PieIrqRegister(Uint16 IrqId, PINT IrqHandler);
 
 #ifdef __cplusplus
 }

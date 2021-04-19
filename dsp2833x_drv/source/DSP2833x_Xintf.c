@@ -234,7 +234,7 @@ InitXintf(void)
 //
 // InitXintf32Gpio - 
 //
-static void
+void
 InitXintf32Gpio()
 {
     EALLOW;
@@ -278,7 +278,7 @@ InitXintf32Gpio()
 //
 // InitXintf16Gpio -
 //
-static void
+void
 InitXintf16Gpio()
 {
     EALLOW;

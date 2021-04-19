@@ -232,12 +232,23 @@ struct  SCI_REGS {
     union SCIPRI_REG     SCIPRI;     // FIFO Priority control   
 };
 
+
+enum SCI_GPIO_SEL {
+	SCIA_RX28_TX29,
+	SCIB_RX19_TX18,
+	SCIC_RX62_TX63,
+};
+
 //
 // SCI External References & Function Declarations
 //
 extern volatile struct SCI_REGS SciaRegs;
 extern volatile struct SCI_REGS ScibRegs;
 extern volatile struct SCI_REGS ScicRegs;
+
+// Function declaration
+extern void InitSciGpio(enum SCI_GPIO_SEL SciGpio);
+
 
 #ifdef __cplusplus
 }

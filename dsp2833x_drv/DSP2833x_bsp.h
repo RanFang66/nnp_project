@@ -25,12 +25,14 @@ extern "C" {
 //
 // Specify the PLL control register (PLLCR) and divide select (DIVSEL) value.
 //
+#define CRYSTAL_FREQ_HZ	 	30000000lu
+
 //#define DSP28_DIVSEL   0   // Enable /4 for SYSCLKOUT
 //#define DSP28_DIVSEL   1 // Enable /4 for SYSCKOUT
 #define DSP28_DIVSEL     2 // Enable /2 for SYSCLKOUT
 //#define DSP28_DIVSEL     3 // Enable /1 for SYSCLKOUT
 
-#define DSP28_PLLCR   10
+#define DSP28_PLLCR   	 10
 //#define DSP28_PLLCR    9
 //#define DSP28_PLLCR    8
 //#define DSP28_PLLCR    7
@@ -42,6 +44,8 @@ extern "C" {
 //#define DSP28_PLLCR    1
 //#define DSP28_PLLCR    0  // PLL is bypassed in this mode
 
+#define SYSCLK_FREQ_HZ		(CRYSTAL_FREQ_HZ * DSP28_PLLCR / DSP28_DIVSEL)
+
 
 // High speed peripheral clock prescale value definition
 #define HISP_PRE_DIV		0x0001
@@ -49,9 +53,12 @@ extern "C" {
 // Low speed peripheral clock prescale value definition
 #define LOSP_PRE_DIV		0x0002
 
+#define HISP_CLK_HZ			(SYSCLK_FREQ_HZ / (HISP_PRE_DIV + 1))
+#define LOSP_CLK_HZ			(SYSCLK_FREQ_HZ / (LOSP_PRE_DIV + 1))
+
 // Watch dog clock prescaler set
 #define WATCHDOG_CLK_DIV	0x111
-
+#define WATCHDOG_CLK_KHZ	(SYSCLK_FREQ_HZ >> (8 + WATCHDOG_CLK_DIV))
 
 
 
@@ -114,6 +121,9 @@ extern "C" {
 #define PARTNO_28334  0xEE
 #define PARTNO_28333  0xEA
 #define PARTNO_28332  0xED
+
+
+
 
 //
 // DO NOT MODIFY THIS LINE.

@@ -114,9 +114,6 @@ InitI2C(I2c_Dev_Type *I2c)
 
 }	
 
-#define I2C_STP_NOT_READY_ERROR		-1
-#define I2C_BUS_BUSY_ERROR 			0
-
 int16 I2cWrite(I2c_Dev_Type *I2c, Uint16 Addr, Uint16* Buff, Uint16 Size)
 {
 	Uint16 i;

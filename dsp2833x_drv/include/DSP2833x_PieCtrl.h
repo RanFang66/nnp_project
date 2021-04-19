@@ -185,8 +185,13 @@ extern volatile struct PIE_CTRL_REGS PieCtrlRegs;
 
 
 // function declaration
-extern void InitPieCtrl(void);
-extern void EnableInterrupts(void);
+extern void  InitPieCtrl(void);
+extern void  EnableInterrupts(void);
+extern int16 EnCpuIntSrc(Uint16 IrqId);
+extern int16 DisCpuIntSrc(Uint16 IrqId);
+extern int16 EnPieIntSrc(Uint16 IrqGrp, Uint16 IrqIndex);
+extern int16 DisPieIntSrc(Uint16 IrqGrp, Uint16 IrqIndex);
+
 
 #ifdef __cplusplus
 }

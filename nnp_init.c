@@ -22,7 +22,7 @@ void InitDSP2833x(void)
 {
 	InitSysCtrl(DSP28_PLLCR, DSP28_DIVSEL, HISP_PRE_DIV, LOSP_PRE_DIV);
 	InitGpio();
-	InitWatchDog(WATCHDOG_CLK_DIV, 0);
+//	InitWatchDog(WATCHDOG_CLK_DIV, 0);
 
 
 	EDIS;
@@ -41,12 +41,10 @@ static void InitPIE(void)
 	IFR = 0x0000;
 	InitPieVectTable();
 
-	EALLOW;
-	PieVectTable.TINT0 = &CpuTimer0Isr;
-	PieVectTable.RTOSINT = &OS_CPU_RTOSINT_Handler;
-	EDIS;
+	PieIrqRegister(38, CpuTimer0Isr);
+	PieIrqRegister(16, OS_CPU_RTOSINT_Handler);
 
-	IER |= M_INT1;
-	PieCtrlRegs.PIEIER1.bit.INTx7 = 1;
+	EnCpuIntSrc(1);
+	EnPieIntSrc(1, 7);
 }
 

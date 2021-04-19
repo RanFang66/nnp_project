@@ -149,7 +149,7 @@ DisCpuIntSrc(Uint16 IrqId)
 int16
 EnPieIntSrc(Uint16 IrqGrp, Uint16 IrqIndex)
 {
-	union PIEIER_REG *PieEnReg = (void*)&PieCtrlRegs;
+	volatile union PIEIER_REG *PieEnReg = &PieCtrlRegs.PIEIER1;
 
 	if (IrqGrp < 1 || IrqGrp > 12) {
 		return -IRQ_GROUP_INVALID;
@@ -159,8 +159,8 @@ EnPieIntSrc(Uint16 IrqGrp, Uint16 IrqIndex)
 		return -IRQ_ID_INVALID;
 	}
 
-	PieEnReg += 2 * IrqGrp;
-	PieEnReg->all |= (1u < (IrqIndex-1));
+	PieEnReg += 2 * (IrqGrp - 1);
+	PieEnReg->all |= (1u << (IrqIndex-1));
 
 	return IRQ_CONFIG_OK;
 }
@@ -169,7 +169,7 @@ EnPieIntSrc(Uint16 IrqGrp, Uint16 IrqIndex)
 int16
 DisPieIntSrc(Uint16 IrqGrp, Uint16 IrqIndex)
 {
-	union PIEIER_REG *PieEnReg = (void*)&PieCtrlRegs;
+	volatile union PIEIER_REG *PieEnReg = &PieCtrlRegs.PIEIER1;
 
 	if (IrqGrp < 1 || IrqGrp > 12) {
 		return -IRQ_GROUP_INVALID;
@@ -179,8 +179,8 @@ DisPieIntSrc(Uint16 IrqGrp, Uint16 IrqIndex)
 		return -IRQ_ID_INVALID;
 	}
 
-	PieEnReg += 2 * IrqGrp;
-	PieEnReg->all &= ~(1u < (IrqIndex-1));
+	PieEnReg += 2 * (IrqGrp-1);
+	PieEnReg->all &= ~(1u << (IrqIndex-1));
 
 	return IRQ_CONFIG_OK;
 }
