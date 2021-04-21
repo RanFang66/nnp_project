@@ -22,3 +22,31 @@ interrupt void CpuTimer0Isr(void)
 	OSTimeTick();
 	OSIntExit();
 }
+
+
+interrupt void SciaReadIsr(void)
+{
+	int len;
+	int i;
+
+	if (SciaRegs.SCIRXST.bit.RXERROR) {
+		SciaRegs.SCIFFRX.bit.RXFFOVRCLR = 1;
+		SciaRegs.SCIFFRX.bit.RXFFINTCLR = 1;
+
+		SciaRegs.SCICTL1.bit.SWRESET = 0;
+		SciaRegs.SCIFFRX.bit.RXFIFORESET = 1;
+		SciaRegs.SCIFFTX.bit.TXFIFOXRESET = 1;
+
+		SciaRegs.SCICTL1.bit.SWRESET = 1;
+	} else if (SciaRegs.SCIFFRX.bit.RXFFST > 0) {
+		len = SciaRegs.SCIFFRX.bit.RXFFST;
+		i = 0;
+		while (len > i) {
+//			*Buff = SciaRegs.SCIRXBUF.bit.RXDT;
+//			Buff++;
+			i++;
+		}
+	} else {
+
+	}
+}

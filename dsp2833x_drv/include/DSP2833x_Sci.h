@@ -239,6 +239,48 @@ enum SCI_GPIO_SEL {
 	SCIC_RX62_TX63,
 };
 
+enum SCI_NO {
+	SCI_A,
+	SCI_B,
+	SCI_C,
+};
+
+enum ParitySel {
+	NO_PARITY,
+	ODD_PARITY,
+	EVEN_PARITY,
+};
+
+
+#define SCI_RX_EN				1u
+#define SCI_TX_EN				2u
+#define SCI_RX_INT_EN  			4u
+#define SCI_TX_INT_EN 			8u
+#define SCI_RXBRK_INT_EN		16u
+
+#define SCI_FIFO_EN				1u
+#define SCI_RX_FIFO_INT_EN 		2u
+#define SCI_TX_FIFO_INT_EN		4u
+
+
+#define SCI_ERROR				1
+#define SCI_NO_DATA				2
+
+#define SCI_WRITE_NUM_MAX		32
+
+struct SciDev {
+	enum SCI_NO SciNo;
+	volatile struct SCI_REGS *pRegs;
+	Uint16	DataBits;
+	Uint16  StopBits;
+	enum ParitySel	Parity;
+	Uint16  SciIntSel;
+	Uint16  SciFifoMode;
+	Uint32	Baudrate;
+	Uint16  SciRxFifoLevel;
+	Uint16  SciTxFifoLevel;
+};
+
 //
 // SCI External References & Function Declarations
 //
@@ -248,7 +290,8 @@ extern volatile struct SCI_REGS ScicRegs;
 
 // Function declaration
 extern void InitSciGpio(enum SCI_GPIO_SEL SciGpio);
-
+extern int16 SciReadPoll(struct SciDev *Sci, Uint16 *Buff, Uint16 Num);
+extern int16 SciWriteBlock(struct SciDev *Sci, const Uint16 *Buff, Uint16 Num);
 
 #ifdef __cplusplus
 }

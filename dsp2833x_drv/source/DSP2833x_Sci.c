@@ -48,43 +48,6 @@
 #include "DSP2833x_Device.h"     // DSP2833x Headerfile Include File
 #include "DSP2833x_bsp.h"
 
-enum SCI_NO {
-	SCI_A,
-	SCI_B,
-	SCI_C,
-};
-
-enum ParitySel {
-	NO_PARITY,
-	ODD_PARITY,
-	EVEN_PARITY,
-};
-
-
-#define SCI_RX_EN			1u
-#define SCI_TX_EN			2u
-#define SCI_RX_INT_EN  		4u
-#define SCI_TX_INT_EN 		8u
-#define SCI_RXBRK_INT_EN	16u
-
-#define SCI_FIFO_EN				1u
-#define SCI_RX_FIFO_INT_EN 		2u
-#define SCI_TX_FIFO_INT_EN		4u
-
-struct SciDev {
-	enum SCI_NO SciNo;
-	volatile struct SCI_REGS *pRegs;
-	Uint16	DataBits;
-	Uint16  StopBits;
-	enum ParitySel	Parity;
-	Uint16  SciIntSel;
-	Uint16  SciFifoMode;
-	Uint32	Baudrate;
-	Uint16  SciRxFifoLevel;
-	Uint16  SciTxFifoLevel;
-};
-
-
 //
 // InitSci - This function initializes the SCI(s) to a known state.
 //
@@ -314,10 +277,7 @@ InitScicGpio()
 #endif // if DSP28_SCIC 
 
 
-#define SCI_ERROR		1
-#define SCI_NO_DATA		2
-
-int16 SciRead(struct SciDev *Sci, Uint16 *Buff, Uint16 Num)
+int16 SciReadPoll(struct SciDev *Sci, Uint16 *Buff, Uint16 Num)
 {
 	volatile struct SCI_REGS *p;
 	int len;
@@ -326,12 +286,12 @@ int16 SciRead(struct SciDev *Sci, Uint16 *Buff, Uint16 Num)
 	p = Sci->pRegs;
 
 	if (p->SCIRXST.bit.RXERROR) {
-		SciaRegs.SCIFFRX.bit.RXFFOVRCLR = 1;
-		SciaRegs.SCIFFRX.bit.RXFFINTCLR = 1;
+		p->SCIFFRX.bit.RXFFOVRCLR = 1;
+		p->SCIFFRX.bit.RXFFINTCLR = 1;
 
 		p->SCICTL1.bit.SWRESET = 0;
-		SciaRegs.SCIFFRX.bit.RXFIFORESET = 1;
-		SciaRegs.SCIFFTX.bit.TXFIFOXRESET = 1;
+		p->SCIFFRX.bit.RXFIFORESET = 1;
+		p->SCIFFTX.bit.TXFIFOXRESET = 1;
 
 		p->SCICTL1.bit.SWRESET = 1;
 		return -SCI_ERROR;
@@ -349,24 +309,25 @@ int16 SciRead(struct SciDev *Sci, Uint16 *Buff, Uint16 Num)
 	
 }
 
-#define SCI_FIFO_DEPTH	16
 
-int16 SciWrite(struct SciDev *Sci, const Uint16 *Buff, Uint16 Num)
+int16 SciWriteBlock(struct SciDev *Sci, const Uint16 *Buff, Uint16 Num)
 {
 	volatile struct SCI_REGS *p;
-	int len;
-	int i = 0;
+	int len = 0;
+
+	if (Num > SCI_WRITE_NUM_MAX)
+		Num = SCI_WRITE_NUM_MAX;
 
 	p = Sci->pRegs;
 
-	while (i < Num) {
-		if (SCI_FIFO_DEPTH - p->SCIFFTX.bit.TXFFST > 0) {
-			p->SCITXBUF = *(Buff+i);
-			i++;
+	while (len < Num) {
+		while (Sci->SciTxFifoLevel - p->SCIFFTX.bit.TXFFST > 0) {
+			p->SCITXBUF = *(Buff+len);
+			len++;
 		}
 	}
 
-	return i;
+	return len;
 }
 
 
