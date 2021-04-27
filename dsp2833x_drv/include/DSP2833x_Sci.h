@@ -289,7 +289,8 @@ extern volatile struct SCI_REGS ScibRegs;
 extern volatile struct SCI_REGS ScicRegs;
 
 // Function declaration
-extern void InitSciGpio(enum SCI_GPIO_SEL SciGpio);
+extern void  InitSciGpio(enum SCI_GPIO_SEL SciGpio);
+extern void  InitSci(struct SciDev *Dev, enum SCI_GPIO_SEL gpio);
 extern int16 SciReadPoll(struct SciDev *Sci, Uint16 *Buff, Uint16 Num);
 extern int16 SciWriteBlock(struct SciDev *Sci, const Uint16 *Buff, Uint16 Num);
 

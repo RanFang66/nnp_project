@@ -186,10 +186,6 @@ ConfigGpio(Uint16 GpioNum, Gpio_Mode_Type GpioMode, Uint16 PullUpEn, Gpio_QSel_T
 		break;
 
 	default:
-		GpioMux = 0;
-		GpioDir = 0;
-		GpioQSel = 0;
-		GpioPud = 0;
 		return GPIO_INVALID_NUM;
 		break;
 	}
