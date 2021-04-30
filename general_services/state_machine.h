@@ -16,15 +16,19 @@
 #ifndef GENERAL_SERVICES_STATE_MACHINE_H_
 #define GENERAL_SERVICES_STATE_MACHINE_H_
 
-typedef struct STATE* (*TriggerFcn)(void);
+typedef uint16_t (*TriggerFcn)(void);
 typedef void (*StateWorkFcn)(void);
 typedef void (*StateEntryFcn)(void);
 typedef void (*StateExitFcn)(void);
 
 #define STATE_NUM_LIMIT		15
 
+#define EINVALID_INDEX 		1
+#define EINDEX_EXIST		2
+#define ECREATE_FAILED		3
+
 struct STATE {
-	uint16_t		State;				// System state
+	uint16_t		Index;				// System state
 
 	StateWorkFcn	Work;			// Repeat running work in this state
 	StateEntryFcn	Entry;			// Function invoked when entry this state
@@ -34,14 +38,15 @@ struct STATE {
 
 struct STATE_MACHINE {
 	struct STATE 	*CurrentState;
-	struct STATE 	*StateTbl[STATE_NUM_LIMIT];
+	struct STATE 	**StateTbl;
 	uint16_t 		StateNum;
+	uint16_t        StateNumMax;
 };
 
 
 
-extern struct STATE_MACHINE *CreateStateMachine(void);
-extern int16_t RegisterState(struct STATE_MACHINE *Machine, StateWorkFcn Work, StateEntryFcn Entry, StateExitFcn Exit, TriggerFcn Trigger);
+extern struct STATE_MACHINE *CreateStateMachine(uint16_t Size);
+extern int16_t RegisterState(struct STATE_MACHINE *Machine, uint16_t Index, StateWorkFcn Work, StateEntryFcn Entry, StateExitFcn Exit, TriggerFcn Trigger);
 extern void RunStateMachine(struct STATE_MACHINE *Machine);
 
 

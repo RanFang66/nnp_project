@@ -14,18 +14,13 @@
 */
 
 
+#include <function_logic/sys_state_machine.h>
 #include <stdint.h>
+#include <stdlib.h>
+
 #include "state_machine.h"
-#include "sys_state_machine.h"
 
 struct STATE_MACHINE* SysStateMachine;
-
-
-void SysStateMachineCreate(void)
-{
-	SysStateMachine = CreateStateMachine();
-//	RegisterState(SysStateMachine, SysInitialize, NULL, SysInitExit, )
-}
 
 /* System State : operating state of the machine
  * Can be one of following value:
@@ -103,3 +98,27 @@ void EntryStandby(void)
 {
 
 }
+
+void EntryRunning(void)
+{
+
+}
+
+void EntryDebug(void)
+{
+
+}
+
+void SysStateMachineCreate(void)
+{
+	SysStateMachine = CreateStateMachine(SYS_STATES_NUM);
+
+	RegisterState(SysStateMachine, INITIALIZATION, 	SysInitialize, 	NULL, 			NULL, Init2Selfcheck);
+	RegisterState(SysStateMachine, SELFCHECK, 		SysSelfcheck, 	NULL, 			NULL, Selfcheck2Standby);
+	RegisterState(SysStateMachine, STANDBY, 		SysStandby, 	EntryStandby, 	NULL, Standby2Running);
+	RegisterState(SysStateMachine, RUNNING, 		SysRunning, 	EntryRunning,	NULL, Running2Standby);
+	RegisterState(SysStateMachine, DEBUG_TEST, 		SysDebug, 		EntryDebug, 	NULL, Debug2Standby);
+}
+
+
+

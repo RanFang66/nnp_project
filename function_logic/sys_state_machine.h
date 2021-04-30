@@ -13,19 +13,17 @@
 *********************************************************************************************************
 */
 
-#ifndef GENERAL_MODULES_SYS_STATE_MACHINE_H_
-#define GENERAL_MODULES_SYS_STATE_MACHINE_H_
+#ifndef FUNCTION_LOGIC_SYS_STATE_MACHINE_H_
+#define FUNCTION_LOGIC_SYS_STATE_MACHINE_H_
 
 
-#define INITIALIZATION	0x0001
-#define SELFCHECK		0x0002
-#define STANDBY 		0x0004
-#define RUNNING			0x0008
-#define DEBUG_TEST		0x0010
+#define INITIALIZATION	1
+#define SELFCHECK		2
+#define STANDBY 		3
+#define RUNNING			4
+#define DEBUG_TEST		5
 
-#define INSPIRATION		0x0001
-#define EXPIRATION		0x0002
-#define	HOLD_BREATH		0x0004
+#define SYS_STATES_NUM		5
 
 
-#endif /* GENERAL_MODULES_SYS_STATE_MACHINE_H_ */
+#endif /* FUNCTION_LOGIC_SYS_STATE_MACHINE_H_ */

@@ -13,15 +13,27 @@
 *     Updated on: Feb 20, 2021-5:08:40 PM
 *********************************************************************************************************
 */
+#include <alarm_check.h>
 #include <stdint.h>
 #include <stdlib.h>
-
-#include "alarm_check.h"
+#include <string.h>
 
 uint16_t g_venti_state = 0;
 
+struct ST_ALARM*  create_alarm(void)
+{
+	struct ST_ALARM*  new_alarm = NULL;
+
+	if((new_alarm = (struct ST_ALARM* *)malloc(sizeof(struct ST_ALARM))) == NULL)
+		return NULL;
+
+	memset(new_alarm, 0, sizeof(struct ST_ALARM));
+
+	return new_alarm;
+}
+
 void
-alarm_init(ALARM alarm, uint16_t premise, uint16_t attr, uint16_t thres, uint16_t thres_recover, uint16_t tsample,
+alarm_init(struct ST_ALARM*  alarm, uint16_t premise, uint16_t attr, uint16_t thres, uint16_t thres_recover, uint16_t tsample,
            uint16_t tcontinue, uint16_t trecover, ALARM_JUDGE_HANDLE judge)
 {
     alarm->attr.all = attr;
@@ -39,7 +51,7 @@ alarm_init(ALARM alarm, uint16_t premise, uint16_t attr, uint16_t thres, uint16_
 }
 
 uint16_t
-alarm_update(ALARM alarm, uint16_t input)
+alarm_update(struct ST_ALARM*  alarm, uint16_t input)
 {
     if ((alarm->premise.all & g_venti_state) == 0) {
         alarm->flag = 0;
@@ -73,37 +85,37 @@ alarm_update(ALARM alarm, uint16_t input)
 }
 
 void
-alarm_enable(ALARM alarm)
+alarm_enable(struct ST_ALARM*  alarm)
 {
     alarm->attr.bits.enable = 1;
 }
 
 void
-alarm_disable(ALARM alarm)
+alarm_disable(struct ST_ALARM*  alarm)
 {
     alarm->attr.bits.enable = 0;
 }
 
 void
-alarm_set_thres(ALARM alarm, uint16_t thres)
+alarm_set_thres(struct ST_ALARM*  alarm, uint16_t thres)
 {
     alarm->thres = thres;
 }
 
 void
-alarm_set_recover_thres(ALARM alarm, uint16_t thres)
+alarm_set_recover_thres(struct ST_ALARM*  alarm, uint16_t thres)
 {
     alarm->thres_recover = thres;
 }
 
 void
-alarm_set_tcontinue(ALARM alarm, uint16_t t_continue)
+alarm_set_tcontinue(struct ST_ALARM*  alarm, uint16_t t_continue)
 {
     alarm->tcontinue = t_continue;
 }
 
 void
-alarm_set_trecover(ALARM alarm, uint16_t t_recover)
+alarm_set_trecover(struct ST_ALARM*  alarm, uint16_t t_recover)
 {
     alarm->trecover = t_recover;
 }

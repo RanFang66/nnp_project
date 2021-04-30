@@ -65,10 +65,10 @@ struct ST_ALARM {
 
 typedef struct ST_ALARM *ALARM;
 
-extern void alarm_init(ALARM alarm, uint16_t premise, uint16_t attr, uint16_t thres, uint16_t thres_recover,
+extern void alarm_init(struct ST_ALARM* alarm, uint16_t premise, uint16_t attr, uint16_t thres, uint16_t thres_recover,
                        uint16_t tsample, uint16_t tcontinue, uint16_t trecover, ALARM_JUDGE_HANDLE judge);
-extern uint16_t alarm_update(ALARM alarm, uint16_t input);
-extern void alarm_enable(ALARM alarm);
-extern void alarm_disable(ALARM alarm);
+extern uint16_t alarm_update(struct ST_ALARM*  alarm, uint16_t input);
+extern void alarm_enable(struct ST_ALARM*  alarm);
+extern void alarm_disable(struct ST_ALARM*  alarm);
 
 #endif /* ALARM_CHECK_H_ */

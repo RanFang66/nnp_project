@@ -28,19 +28,27 @@ static void _ExitDefault(void)
 
 }
 
-static void _DoDefault(void)
+static void _WorkDefault(void)
 {
 
 }
 
 struct STATE_MACHINE *
-CreateStateMachine(void)
+CreateStateMachine(uint16_t Size)
 {
 	struct STATE_MACHINE *NewMachine = NULL;
 
 	if ((NewMachine = (struct STATE_MACHINE*)malloc(sizeof(struct STATE_MACHINE))) == NULL)
 		return NULL;
+
+	if ((NewMachine->StateTbl = (struct STATE**)malloc(Size * sizeof(struct STATE *))) == NULL) {
+		free(NewMachine);
+		return NULL;
+	}
+
+	memset(NewMachine->StateTbl, 0, sizeof(struct STATE*) * Size);
     memset(NewMachine, 0, sizeof(struct STATE_MACHINE));
+    NewMachine->StateNumMax = Size;
 
 	return NewMachine;
 }
@@ -48,19 +56,18 @@ CreateStateMachine(void)
 void
 RunStateMachine(struct STATE_MACHINE *Machine)
 {
-	uint16_t i;
-	struct STATE *NewState;
+	uint16_t NewState;
 	while (1){
 		Machine->CurrentState->Work();
 		if ((NewState = Machine->CurrentState->Trig()) != 0) {
 			Machine->CurrentState->Exit();
-			Machine->CurrentState = NewState;
+			Machine->CurrentState = Machine->StateTbl[NewState];
 			Machine->CurrentState->Entry();
 		}
 	}
 }
 
-struct STATE*
+static struct STATE*
 CreateState(void)
 {
 	struct STATE * NewState = NULL;
@@ -72,31 +79,45 @@ CreateState(void)
 }
 
 int16_t
-RegisterState(struct STATE_MACHINE *Machine, StateWorkFcn Work, StateEntryFcn Entry, StateExitFcn Exit, TriggerFcn Trigger)
+RegisterState(struct STATE_MACHINE *Machine, uint16_t Index, StateWorkFcn Work, StateEntryFcn Entry, StateExitFcn Exit, TriggerFcn Trigger)
 {
 	struct STATE *NewState = NULL;
-	if (Machine->StateNum >= STATE_NUM_LIMIT)
-		return -2;
+
+	if (Index > Machine->StateNumMax)
+		return -EINVALID_INDEX;
+
+	if (Machine->StateTbl[Index-1] != NULL)
+		return -EINDEX_EXIST;
 
 	if ((NewState = CreateState()) == NULL)
-		return -1;
+		return -ECREATE_FAILED;
+
+	NewState->Index = 1u << Index;
 
 	if (Work)
 		NewState->Work = Work;
 	else
-		NewState->Work = _DoDefault;
+		NewState->Work = _WorkDefault;
 
-	NewState->Entry = Entry;
-	NewState->Exit = Exit;
+	if (Entry)
+		NewState->Entry = Entry;
+	else
+		NewState->Entry = _EntryDefault;
+
+	if (Exit)
+		NewState->Exit = Exit;
+	else
+		NewState->Exit = _ExitDefault;
+
 	NewState->Trig = Trigger;
-	NewState->State = 1 << Machine->StateNum;
 
-	if (Machine->StateNum == 0)
+	if (Machine->CurrentState == NULL)
 	{
 		Machine->CurrentState = NewState;
 	}
+	Machine->StateTbl[Index-1] = NewState;
 	Machine->StateNum++;
-	Machine->StateTbl[Machine->StateNum-1] = NewState;
+
 
 	return Machine->StateNum;
 }
