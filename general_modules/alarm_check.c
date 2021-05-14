@@ -13,14 +13,15 @@
 *     Updated on: Feb 20, 2021-5:08:40 PM
 *********************************************************************************************************
 */
-#include <alarm_check.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include "alarm_check.h"
+
 
 uint16_t g_venti_state = 0;
 
-struct ST_ALARM*  create_alarm(void)
+struct ST_ALARM* create_alarm(void)
 {
 	struct ST_ALARM*  new_alarm = NULL;
 

@@ -37,6 +37,7 @@ struct MODE_INPUT_PARA {
 	uint16_t 	Pinsp;
 	uint16_t 	Peep;
 	uint16_t 	Ti;
+	uint16_t	Te;
 	uint16_t 	Freq;
 	uint16_t	FiO2;
 	uint16_t 	VG;

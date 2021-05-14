@@ -20,26 +20,37 @@
 #include "venti_mode.h"
 
 #define 	LPM_TO_MLPS			16.66667F
+uint16_t g_VentTime = 0;
 
 void IPPVInsp(struct MODE_INPUT_PARA *Para, struct MODE_OUTPUT *Output)
 {
 	Output->Flow = Para->IFlow * LPM_TO_MLPS;
+	Output->Paw = Para->Pinsp;
 
 }
 
-void IPPVExp(struct MODE_INPUT_PARA *para, struct MODE_OUTPUT *output)
+void IPPVExp(struct MODE_INPUT_PARA *Para, struct MODE_OUTPUT *Output)
 {
-
+	Output->Flow = Para->IFlow * LPM_TO_MLPS;
+	Output->Paw = Para->Peep;
 }
 
-uint16_t IPPVInspStart(uint16_t)
+uint16_t IPPVInspStart(struct MODE_INPUT_PARA *Para)
 {
-
+	if (g_VentTime > Para->Ti) {
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
-uint16_t IPPVExpStart(uint16_t)
+uint16_t IPPVExpStart(struct MODE_INPUT_PARA *Para)
 {
-
+	if (g_VentTime > Para->Ti + Para->Te) {
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 static const struct VENTI_MODE VentiModeTbl[VENTI_MODE_NUM]  = {

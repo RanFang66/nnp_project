@@ -49,7 +49,7 @@ struct REALTIME_DATA {
 	float PO2Src;		// O2 source pressure
 	float Pprox;		// Proximity pressure
 	float Pinsp;		// Inspiration port pressure
-	float PAtmos		// Atmospheric pressure
+	float PAtmos;		// Atmospheric pressure
 
 	float FlowAir;		// Air source flow
 	float FlowO2;		// O2 source flow
