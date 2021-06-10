@@ -268,9 +268,7 @@ enum ParitySel {
 
 #define SCI_WRITE_NUM_MAX		32
 
-struct SciDev {
-	enum SCI_NO SciNo;
-	volatile struct SCI_REGS *pRegs;
+struct SCI_INIT_TYPE {
 	Uint16	DataBits;
 	Uint16  StopBits;
 	enum ParitySel	Parity;
@@ -288,11 +286,13 @@ extern volatile struct SCI_REGS SciaRegs;
 extern volatile struct SCI_REGS ScibRegs;
 extern volatile struct SCI_REGS ScicRegs;
 
+
+typedef struct SCI_REGS SCI_TYPE;
 // Function declaration
 extern void  InitSciGpio(enum SCI_GPIO_SEL SciGpio);
-extern void  InitSci(struct SciDev *Dev, enum SCI_GPIO_SEL gpio);
-extern int16 SciReadPoll(struct SciDev *Sci, Uint16 *Buff, Uint16 Num);
-extern int16 SciWriteBlock(struct SciDev *Sci, const Uint16 *Buff, Uint16 Num);
+extern void  InitSci(SCI_TYPE *Scix, struct SCI_INIT_TYPE *SciInit, enum SCI_GPIO_SEL gpio);
+extern int16 SciReadPoll(SCI_TYPE *Scix, Uint16 *Buff, Uint16 Num);
+extern int16 SciWriteBlock(SCI_TYPE *Scix, const Uint16 *Buff, Uint16 Num);
 
 #ifdef __cplusplus
 }

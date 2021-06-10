@@ -55,7 +55,7 @@ struct CAMP {
 	Uint16 			InitVal;
 };
 
-typedef struct EPWM_TYPE {
+struct EPWM_INIT_TYPE {
 	EPWM_CHANNL		PwmChannl;
 	Uint32 			ClockHz;
 	Uint16			CounterPeriod;
@@ -67,7 +67,7 @@ typedef struct EPWM_TYPE {
 	Uint16			IntPeriod;
 	struct CAMP		cmpA;
 	struct CAMP		cmpB;
-}EPWM_T;
+};
 
 #define UP_ACTION_MASK		0x0003
 #define DOWN_ACTION_MASK	0x000C
@@ -76,34 +76,27 @@ typedef struct EPWM_TYPE {
 // InitEPwm - This function initializes the ePWM(s) to a known state.
 //
 void 
-InitEPwm(EPWM_T *ePwm)
+InitEPwm(EPWM_TYPE *EPwmx, struct EPWM_INIT_TYPE *EpwmInit)
 {
-	volatile struct EPWM_REGS *pRegs;
 	Uint16	DivVal = 0;
 
-	switch (ePwm->PwmChannl) {
+	switch (EpwmInit->PwmChannl) {
 	case EPWM_1:
-		pRegs = &EPwm1Regs;
 		InitEPwm1Gpio();
 		break;
 	case EPWM_2:
-		pRegs = &EPwm2Regs;
 		InitEPwm2Gpio();
 		break;
 	case EPWM_3:
-		pRegs = &EPwm3Regs;
 		InitEPwm3Gpio();
 		break;
 	case EPWM_4:
-		pRegs = &EPwm4Regs;
 		InitEPwm4Gpio();
 		break;
 	case EPWM_5:
-		pRegs = &EPwm5Regs;
 		InitEPwm5Gpio();
 		break;
 	case EPWM_6:
-		pRegs = &EPwm6Regs;
 		InitEPwm6Gpio();
 		break;
 	default:
@@ -111,32 +104,32 @@ InitEPwm(EPWM_T *ePwm)
 		break;
 	}
 
-	DivVal = HISP_CLK_HZ / ePwm->ClockHz;
-	pRegs->TBCTL.bit.HSPCLKDIV = DivVal / 2;
-	pRegs->TBCTL.bit.CLKDIV = DivVal - DivVal / 2;
-	pRegs->TBCTL.bit.PHSEN = TB_DISABLE;
-	pRegs->TBCTL.bit.CTRMODE = ePwm->CounterMode;
-	pRegs->TBCTL.bit.PHSDIR = ePwm->PhaseDir;
-	pRegs->TBCTL.bit.SYNCOSEL = ePwm->SynOutSel;
+	DivVal = HISP_CLK_HZ / EpwmInit->ClockHz;
+	EPwmx->TBCTL.bit.HSPCLKDIV = DivVal / 2;
+	EPwmx->TBCTL.bit.CLKDIV = DivVal - DivVal / 2;
+	EPwmx->TBCTL.bit.PHSEN = TB_DISABLE;
+	EPwmx->TBCTL.bit.CTRMODE = EpwmInit->CounterMode;
+	EPwmx->TBCTL.bit.PHSDIR = EpwmInit->PhaseDir;
+	EPwmx->TBCTL.bit.SYNCOSEL = EpwmInit->SynOutSel;
 
-	pRegs->TBPRD = ePwm->CounterPeriod;
-	pRegs->TBPHS.half.TBPHS = 0x0000;
-	pRegs->TBCTR = 0x0000;
+	EPwmx->TBPRD = EpwmInit->CounterPeriod;
+	EPwmx->TBPHS.half.TBPHS = 0x0000;
+	EPwmx->TBCTR = 0x0000;
 
-    pRegs->CMPCTL.bit.SHDWAMODE = ePwm->cmpA.ShadowMode;
-    pRegs->CMPCTL.bit.SHDWBMODE = ePwm->cmpB.ShadowMode;
-    pRegs->CMPCTL.bit.LOADAMODE = ePwm->cmpA.LoadMode;  // Load on Zero
-    pRegs->CMPCTL.bit.LOADBMODE = ePwm->cmpB.LoadMode;
+	EPwmx->CMPCTL.bit.SHDWAMODE = EpwmInit->cmpA.ShadowMode;
+	EPwmx->CMPCTL.bit.SHDWBMODE = EpwmInit->cmpB.ShadowMode;
+	EPwmx->CMPCTL.bit.LOADAMODE = EpwmInit->cmpA.LoadMode;  // Load on Zero
+	EPwmx->CMPCTL.bit.LOADBMODE = EpwmInit->cmpB.LoadMode;
 
 
-    pRegs->AQCTLA.bit.CAU = ePwm->cmpA.Action & UP_ACTION_MASK;
-    pRegs->AQCTLA.bit.CAD = ePwm->cmpA.Action & DOWN_ACTION_MASK;
-    pRegs->AQCTLB.bit.CBU = ePwm->cmpB.Action & UP_ACTION_MASK;
-    pRegs->AQCTLB.bit.CBD = ePwm->cmpB.Action & DOWN_ACTION_MASK;
+	EPwmx->AQCTLA.bit.CAU = EpwmInit->cmpA.Action & UP_ACTION_MASK;
+	EPwmx->AQCTLA.bit.CAD = EpwmInit->cmpA.Action & DOWN_ACTION_MASK;
+	EPwmx->AQCTLB.bit.CBU = EpwmInit->cmpB.Action & UP_ACTION_MASK;
+	EPwmx->AQCTLB.bit.CBD = EpwmInit->cmpB.Action & DOWN_ACTION_MASK;
 
-    pRegs->ETSEL.bit.INTSEL = ePwm->IntMode;
-    pRegs->ETSEL.bit.INTEN = ePwm->IntMode;
-    pRegs->ETPS.bit.INTPRD = ePwm->IntPeriod;
+	EPwmx->ETSEL.bit.INTSEL = EpwmInit->IntMode;
+	EPwmx->ETSEL.bit.INTEN = EpwmInit->IntMode;
+	EPwmx->ETPS.bit.INTPRD = EpwmInit->IntPeriod;
 
 }
 

@@ -264,23 +264,25 @@ struct I2C_REGS {
 //
 extern volatile struct I2C_REGS I2caRegs;
 
+#define I2ca	I2caRegs
+
+typedef volatile struct I2C_REGS I2C_TYPE;
 
 typedef struct I2C_DEV {
-	volatile struct I2C_REGS 	*RegBase;
 	Uint16						Clock_kHz;
 	Uint16						I2cMode;
 	Uint16						I2cIntSrc;
 	Uint16						I2cFifoMode;
 	Uint16						I2cRxFifoLevel;
 	Uint16						I2cTxFifoLevel;
-} I2c_Dev_Type;
+} I2C_INIT_TYPE;
 
 //
 // Function declaration
 //
-extern void InitI2C(I2c_Dev_Type *I2c);
-extern int16 I2cWrite(I2c_Dev_Type *I2c, Uint16 Addr, Uint16* Buffer, Uint16 Size);
-extern int16 I2cRead(I2c_Dev_Type *I2c, Uint16 Addr, Uint16* Buffer, Uint16 Size);
+extern void InitI2C(I2C_TYPE *I2cx, I2C_INIT_TYPE *I2c);
+extern int16 I2cWrite(I2C_TYPE *I2cx, Uint16 Addr, Uint16* Buffer, Uint16 Size);
+extern int16 I2cRead(I2C_TYPE *I2cx, Uint16 Addr, Uint16* Buffer, Uint16 Size);
 
 
 

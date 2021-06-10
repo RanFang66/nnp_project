@@ -1,3 +1,3 @@
-#!/bin/bash
-rm -rf Debug
-rm -rf .settings
+#!/usr/bin/bash
+rm -rfv ./Debug
+rm -rfv ./settings

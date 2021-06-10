@@ -22,4 +22,12 @@
 
 #define VENTI_STATES_NUM	3
 
+struct VENTI_TIMER {
+	uint16_t 	TickMs;
+	uint16_t 	InspTime;
+	uint16_t 	ExpTime;
+	uint16_t	VentiTime;
+};
+
+
 #endif /* FUNCTION_LOGIC_VENTI_STATE_MACHINE_H_ */

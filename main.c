@@ -13,12 +13,12 @@
 *********************************************************************************************************
 */
 
+#include  <nnp_project.h>
 #include  <ucos_ii.h>
 #include  <cpu_core.h>
 #include  <lib_def.h>
 #include  <os_cpu.h>
 
-#include "nnp_project.h"
 
 
 CPU_STK_SIZE  		TaskStartStk[TASK_STK_SIZE];

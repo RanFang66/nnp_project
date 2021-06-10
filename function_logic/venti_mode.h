@@ -67,4 +67,9 @@ struct VENTI_MODE {
 	struct MODE_OPERATIONS  *ModeOps;
 };
 
+extern struct VENTI_MODE 		*CurVentiMode;
+extern struct MODE_INPUT_PARA 	ModeInput;
+extern struct MODE_OUTPUT		ModeOutput;
+
+
 #endif /* FUNCTION_LOGIC_VENTI_MODE_H_ */

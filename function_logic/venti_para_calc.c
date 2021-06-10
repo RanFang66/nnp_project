@@ -16,26 +16,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "venti_state_machine.h"
 #include "venti_para_calc.h"
 
-void PressureDataProcess(struct REALTIME_DATA *RtData, struct MONITOR_DATA *MoniData, uint16_t VentiPhase)
+void GetRealOriginData(struct REALTIME_DATA *RtData)
 {
-	float Paw = RtData->Pprox;
-	static float Pmax = 0;
-
-	if (VentiPhase == INSPIRATION) {
-		if (Paw > Pmax) {
-			Pmax = Paw;
-		}
-	} else if (VentiPhase == EXPIRATION) {
-		MoniData->Ppeak = Pmax;
-		Pmax = 0;
-	} else {
-		// no action
-	}
-
-
 
 }
 

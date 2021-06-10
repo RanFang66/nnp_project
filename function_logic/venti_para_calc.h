@@ -26,7 +26,7 @@ struct AIRWAY_PARA {
 
 /* monitor data after data process */
 struct MONITOR_DATA {
-	float Ppeak;
+	float Peak;
 	float Peep;
 	float Pmean;
 

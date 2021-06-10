@@ -645,6 +645,8 @@ typedef enum EPWM_MODULE {
 	EPWM_6,
 }EPWM_CHANNL;
 
+typedef struct EPWM_REGS EPWM_TYPE;
+
 extern void InitEPwm1Gpio(void);
 extern void InitEPwm2Gpio(void);
 extern void InitEPwm3Gpio(void);

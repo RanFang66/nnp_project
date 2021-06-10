@@ -15,10 +15,10 @@
 
 
 #include <function_logic/sys_state_machine.h>
+#include <public_services/state_machine.h>
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "state_machine.h"
 
 struct STATE_MACHINE* SysStateMachine;
 

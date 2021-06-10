@@ -52,67 +52,54 @@
 // InitSci - This function initializes the SCI(s) to a known state.
 //
 void 
-InitSci(struct SciDev *Dev, enum SCI_GPIO_SEL gpio)
+InitSci(SCI_TYPE *Scix, struct SCI_INIT_TYPE *SciInit, enum SCI_GPIO_SEL gpio)
 {
-    volatile struct SCI_REGS *p;
     Uint32  brr;
 
     InitSciGpio(gpio);
-    switch (Dev->SciNo) {
-    case SCI_A:
-        p = &SciaRegs;
-        break;
-    case SCI_B:
-        p = &ScibRegs;
-        break;
-    case SCI_C:
-        p = &ScicRegs;
-        break;
-    default:
-        break;
-    }
-    Dev->pRegs = p;
-    p->SCICTL1.bit.SWRESET = 0;
 
-    p->SCICCR.bit.STOPBITS = Dev->StopBits;
-    if (Dev->Parity == ODD_PARITY) {
-    	p->SCICCR.bit.PARITY = 0;
-    	p->SCICCR.bit.PARITYENA = 1;
-    } else if (Dev->Parity == EVEN_PARITY){
-    	p->SCICCR.bit.PARITY = 1;
-		p->SCICCR.bit.PARITYENA = 1;
+
+    Scix->SCICTL1.bit.SWRESET = 0;
+
+    Scix->SCICCR.bit.STOPBITS = SciInit->StopBits;
+    if (SciInit->Parity == ODD_PARITY) {
+    	Scix->SCICCR.bit.PARITY = 0;
+    	Scix->SCICCR.bit.PARITYENA = 1;
+    } else if (SciInit->Parity == EVEN_PARITY){
+    	Scix->SCICCR.bit.PARITY = 1;
+    	Scix->SCICCR.bit.PARITYENA = 1;
     } else {
-    	p->SCICCR.bit.PARITY = 0;
-		p->SCICCR.bit.PARITYENA = 0;
+    	Scix->SCICCR.bit.PARITY = 0;
+    	Scix->SCICCR.bit.PARITYENA = 0;
     }
 
-    p->SCICCR.bit.SCICHAR = Dev->DataBits;
-    p->SCICCR.bit.LOOPBKENA = 0;
-    p->SCICCR.bit.ADDRIDLE_MODE = 0;
+    Scix->SCICCR.bit.SCICHAR = SciInit->DataBits;
+    Scix->SCICCR.bit.LOOPBKENA = 0;
+    Scix->SCICCR.bit.ADDRIDLE_MODE = 0;
 
-    p->SCICTL1.bit.RXENA = Dev->SciIntSel & SCI_RX_EN ? 1 : 0;             		// enable RX
-    p->SCICTL1.bit.TXENA = Dev->SciIntSel & SCI_TX_EN ? 1 : 0;               	// enable TX
-	p->SCICTL1.bit.RXERRINTENA = Dev->SciIntSel & SCI_RX_INT_EN ? 1 : 0;        // enable RX error interrupt
-	p->SCICTL2.bit.TXINTENA = Dev->SciIntSel & SCI_TX_INT_EN ? 1: 0;            // disable TX interrupt
-	p->SCICTL2.bit.RXBKINTENA = Dev->SciIntSel & SCI_RXBRK_INT_EN ? 1 : 0;      // enable RX break interrupt
+    Scix->SCICTL1.bit.RXENA = SciInit->SciIntSel & SCI_RX_EN ? 1 : 0;             		// enable RX
+    Scix->SCICTL1.bit.TXENA = SciInit->SciIntSel & SCI_TX_EN ? 1 : 0;               	// enable TX
+    Scix->SCICTL1.bit.RXERRINTENA = SciInit->SciIntSel & SCI_RX_INT_EN ? 1 : 0;        // enable RX error interrupt
+    Scix->SCICTL2.bit.TXINTENA = SciInit->SciIntSel & SCI_TX_INT_EN ? 1: 0;            // disable TX interrupt
+    Scix->SCICTL2.bit.RXBKINTENA = SciInit->SciIntSel & SCI_RXBRK_INT_EN ? 1 : 0;      // enable RX break interrupt
 
 
     // set baud rate of SCI
-    brr = LOSP_CLK_HZ / (Dev->Baudrate * 8) - 1;
-    p->SCIHBAUD = (Uint16)(brr >> 16);
-    p->SCILBAUD = (Uint16)(brr & 0x0000FFFF);
+    brr = LOSP_CLK_HZ / (SciInit->Baudrate * 8) - 1;
+    Scix->SCIHBAUD = (Uint16)(brr >> 16);
+    Scix->SCILBAUD = (Uint16)(brr & 0x0000FFFF);
 
 
-    p->SCIFFTX.bit.SCIFFENA = Dev->SciFifoMode & SCI_FIFO_EN ? 1 : 0;
-    p->SCIFFTX.bit.TXFFIENA = Dev->SciFifoMode & SCI_TX_FIFO_INT_EN ? 1 : 0;
-    p->SCIFFTX.bit.TXFFIL = Dev->SciTxFifoLevel;
+    Scix->SCIFFTX.bit.SCIFFENA = SciInit->SciFifoMode & SCI_FIFO_EN ? 1 : 0;
+    Scix->SCIFFTX.bit.TXFFIENA = SciInit->SciFifoMode & SCI_TX_FIFO_INT_EN ? 1 : 0;
+    Scix->SCIFFTX.bit.TXFFIL = SciInit->SciTxFifoLevel;
 
-    p->SCIFFRX.bit.RXFFIENA = Dev->SciFifoMode & SCI_RX_FIFO_INT_EN ? 1 : 0;;
-    p->SCIFFRX.bit.RXFFIL = Dev->SciRxFifoLevel;
+    Scix->SCIFFRX.bit.RXFFIENA = SciInit->SciFifoMode & SCI_RX_FIFO_INT_EN ? 1 : 0;;
+    Scix->SCIFFRX.bit.RXFFIL = SciInit->SciRxFifoLevel;
 
-    p->SCIFFCT.bit.FFTXDLY = 0;
-    p->SCIFFCT.bit.ABD = 0;
-    p->SCIFFCT.bit.CDC = 0;
+    Scix->SCIFFCT.bit.FFTXDLY = 0;
+    Scix->SCIFFCT.bit.ABD = 0;
+    Scix->SCIFFCT.bit.CDC = 0;
 }	
 
 
@@ -277,28 +264,25 @@ InitScicGpio()
 #endif // if DSP28_SCIC 
 
 
-int16 SciReadPoll(struct SciDev *Sci, Uint16 *Buff, Uint16 Num)
+int16 SciReadPoll(SCI_TYPE *Scix, Uint16 *Buff, Uint16 Num)
 {
-	volatile struct SCI_REGS *p;
 	int len;
 	int i = 0;
 
-	p = Sci->pRegs;
+	if (Scix->SCIRXST.bit.RXERROR) {
+		Scix->SCIFFRX.bit.RXFFOVRCLR = 1;
+		Scix->SCIFFRX.bit.RXFFINTCLR = 1;
 
-	if (p->SCIRXST.bit.RXERROR) {
-		p->SCIFFRX.bit.RXFFOVRCLR = 1;
-		p->SCIFFRX.bit.RXFFINTCLR = 1;
+		Scix->SCICTL1.bit.SWRESET = 0;
+		Scix->SCIFFRX.bit.RXFIFORESET = 1;
+		Scix->SCIFFTX.bit.TXFIFOXRESET = 1;
 
-		p->SCICTL1.bit.SWRESET = 0;
-		p->SCIFFRX.bit.RXFIFORESET = 1;
-		p->SCIFFTX.bit.TXFIFOXRESET = 1;
-
-		p->SCICTL1.bit.SWRESET = 1;
+		Scix->SCICTL1.bit.SWRESET = 1;
 		return -SCI_ERROR;
-	} else if (p->SCIFFRX.bit.RXFFST > 0) {
-		len = p->SCIFFRX.bit.RXFFST;
+	} else if (Scix->SCIFFRX.bit.RXFFST > 0) {
+		len = Scix->SCIFFRX.bit.RXFFST;
 		while (len > i) {
-			*Buff = p->SCIRXBUF.bit.RXDT;
+			*Buff = Scix->SCIRXBUF.bit.RXDT;
 			Buff++;
 			i++;
 		}
@@ -310,23 +294,20 @@ int16 SciReadPoll(struct SciDev *Sci, Uint16 *Buff, Uint16 Num)
 }
 
 
-int16 SciWriteBlock(struct SciDev *Sci, const Uint16 *Buff, Uint16 Num)
+int16 SciWriteBlock(SCI_TYPE *Scix, const Uint16 *Buff, Uint16 Num)
 {
-	volatile struct SCI_REGS *p;
 	int len = 0;
 
 	if (Num > SCI_WRITE_NUM_MAX)
 		Num = SCI_WRITE_NUM_MAX;
 
-	p = Sci->pRegs;
 
 	while (len < Num) {
-		while (Sci->SciTxFifoLevel - p->SCIFFTX.bit.TXFFST > 0) {
-			p->SCITXBUF = *(Buff+len);
+		while (Scix->SCIFFTX.bit.TXFFIL - Scix->SCIFFTX.bit.TXFFST > 0) {
+			Scix->SCITXBUF = *(Buff+len);
 			len++;
 		}
 	}
-
 	return len;
 }
 

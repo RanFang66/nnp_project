@@ -52,69 +52,66 @@
 // InitI2C - This function initializes the I2C to a known state.
 //
 void 
-InitI2C(I2c_Dev_Type *I2c)
+InitI2C(I2C_TYPE *I2cx, I2C_INIT_TYPE *I2cInit)
 {
-	volatile struct I2C_REGS *pRegs = &I2caRegs;
 	Uint16	tmp;
 
-	I2c->RegBase = pRegs;
-
-	pRegs->I2CMDR.all = 0x0000; 	//Reset I2c
+	I2cx->I2CMDR.all = 0x0000; 	//Reset I2c
 
     /* Configure I2C clock */
     #if (CPU_FRQ_150MHZ)            // Default - For 150MHz SYSCLKOUT
     //
     // Prescaler - need 7-12 Mhz on module clk (150/15 = 10MHz)
     //
-	pRegs->I2CPSC.all = 14;
+	I2cx->I2CPSC.all = 14;
     #endif
     #if (CPU_FRQ_100MHZ)            // For 100 MHz SYSCLKOUT
 	//
 	// Prescaler - need 7-12 Mhz on module clk (100/10 = 10MHz)
 	//
-	I2c->RegBase->I2CPSC.all = 9;
+	I2cx->I2CPSC.all = 9;
     #endif
 
-    switch (I2c->Clock_kHz) {
+    switch (I2cInit->Clock_kHz) {
     case I2C_CLK_400KHZ:
-        pRegs->I2CCLKH = 10;
-        pRegs->I2CCLKL = 5;
+    	I2cx->I2CCLKH = 10;
+    	I2cx->I2CCLKL = 5;
         break;
     case I2C_CLK_200KHZ:
-        pRegs->I2CCLKH = 20;
-        pRegs->I2CCLKL = 20;
+    	I2cx->I2CCLKH = 20;
+    	I2cx->I2CCLKL = 20;
         break;
     case I2C_CLK_100KHZ:
-        pRegs->I2CCLKH = 50;
-        pRegs->I2CCLKL = 40;
+    	I2cx->I2CCLKH = 50;
+    	I2cx->I2CCLKL = 40;
         break;
     case I2C_CLK_80KHZ:
-        pRegs->I2CCLKH = 75;
-        pRegs->I2CCLKL = 40;
+    	I2cx->I2CCLKH = 75;
+    	I2cx->I2CCLKL = 40;
         break;
     default:
-        tmp = 10000 / I2c->Clock_kHz - 10;
-        pRegs->I2CCLKH = tmp / 2;
-        pRegs->I2CCLKL = tmp - tmp / 2;
+        tmp = 10000 / I2cInit->Clock_kHz - 10;
+        I2cx->I2CCLKH = tmp / 2;
+        I2cx->I2CCLKL = tmp - tmp / 2;
     }
 
     /* I2C basic interrup source configuration */
-    pRegs->I2CIER.all = I2c->I2cIntSrc;
+    I2cx->I2CIER.all = I2cInit->I2cIntSrc;
 
 
-    pRegs->I2CFFTX.bit.I2CFFEN = I2c->I2cFifoMode & I2C_FIFO_EN;
-    pRegs->I2CFFTX.bit.TXFFIENA = I2c->I2cFifoMode & I2C_FIFO_TXINT_EN;
-    pRegs->I2CFFRX.bit.RXFFIENA = I2c->I2cFifoMode & I2C_FIFO_RXINT_EN;
-    pRegs->I2CFFTX.bit.TXFFIL = I2c->I2cTxFifoLevel;
-    pRegs->I2CFFRX.bit.RXFFIL = I2c->I2cRxFifoLevel;
-    pRegs->I2CSTR.all = 0xFFFF;
-    pRegs->I2CMDR.all = 0x0020;
+    I2cx->I2CFFTX.bit.I2CFFEN = I2cInit->I2cFifoMode & I2C_FIFO_EN;
+    I2cx->I2CFFTX.bit.TXFFIENA = I2cInit->I2cFifoMode & I2C_FIFO_TXINT_EN;
+    I2cx->I2CFFRX.bit.RXFFIENA = I2cInit->I2cFifoMode & I2C_FIFO_RXINT_EN;
+    I2cx->I2CFFTX.bit.TXFFIL = I2cInit->I2cTxFifoLevel;
+    I2cx->I2CFFRX.bit.RXFFIL = I2cInit->I2cRxFifoLevel;
+    I2cx->I2CSTR.all = 0xFFFF;
+    I2cx->I2CMDR.all = 0x0020;
 
     DELAY_US(100);
 
 }	
 
-int16 I2cWrite(I2c_Dev_Type *I2c, Uint16 Addr, Uint16* Buff, Uint16 Size)
+int16 I2cWrite(I2C_TYPE *I2cx, Uint16 Addr, Uint16* Buff, Uint16 Size)
 {
 	Uint16 i;
 	//
@@ -123,18 +120,18 @@ int16 I2cWrite(I2c_Dev_Type *I2c, Uint16 Addr, Uint16* Buff, Uint16 Size)
 	// set. If this bit is not checked prior to initiating a new message, the
 	// I2C could get confused.
 	//
-	if (I2c->RegBase->I2CMDR.bit.STP == 1)
+	if (I2cx->I2CMDR.bit.STP == 1)
 	{
 		return I2C_STP_NOT_READY_ERROR;
 	}
 
 	// Slave Address Set
-	I2c->RegBase->I2CSAR = Addr;
+	I2cx->I2CSAR = Addr;
 
 	//
 	// Check if bus busy
 	//
-	if (I2c->RegBase->I2CSTR.bit.BB == 1)
+	if (I2cx->I2CSTR.bit.BB == 1)
 	{
 		return I2C_BUS_BUSY_ERROR;
 	}
@@ -142,25 +139,25 @@ int16 I2cWrite(I2c_Dev_Type *I2c, Uint16 Addr, Uint16* Buff, Uint16 Size)
 	//
 	// Setup number of bytes to send MsgBuffer + Address
 	//
-	I2c->RegBase->I2CCNT = Size;
+	I2cx->I2CCNT = Size;
 
 	//
 	// Setup data to send
 	//
 	for (i = 0; i < Size; i++)
 	{
-		I2caRegs.I2CDXR = *(Buff+i);
+		I2cx->I2CDXR = *(Buff+i);
 	}
 
 	//
 	// Send start as master transmitter
 	//
-	I2caRegs.I2CMDR.all = 0x6E20;
+	I2cx->I2CMDR.all = 0x6E20;
 
 	return Size;
 }
 
-int16 I2cRead(I2c_Dev_Type *I2c, Uint16 Addr, Uint16* Buffer, Uint16 Size)
+int16 I2cRead(I2C_TYPE *I2cx, Uint16 Addr, Uint16* Buffer, Uint16 Size)
 {
 	//
 	// Wait until the STP bit is cleared from any previous master communication
@@ -168,21 +165,21 @@ int16 I2cRead(I2c_Dev_Type *I2c, Uint16 Addr, Uint16* Buffer, Uint16 Size)
 	// set. If this bit is not checked prior to initiating a new message, the
 	// I2C could get confused.
 	//
-	if (I2c->RegBase->I2CMDR.bit.STP == 1)
+	if (I2cx->I2CMDR.bit.STP == 1)
 	{
 		return I2C_STP_NOT_READY_ERROR;
 	}
 
 	// Slave Address Set
-	I2c->RegBase->I2CSAR = Addr;
-	I2caRegs.I2CCNT = Size;				// Setup how many bytes to expect
+	I2cx->I2CSAR = Addr;
+	I2cx->I2CCNT = Size;				// Setup how many bytes to expect
 
-	if (I2c->RegBase->I2CSTR.bit.BB == 1)
+	if (I2cx->I2CSTR.bit.BB == 1)
 	{
 		return I2C_BUS_BUSY_ERROR;
 	}
 
-	I2caRegs.I2CMDR.all = 0x2C20;		// Send restart as master receiver
+	I2cx->I2CMDR.all = 0x2C20;		// Send restart as master receiver
 
 	return Size;
 }

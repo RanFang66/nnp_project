@@ -12,8 +12,8 @@
 *
 *********************************************************************************************************
 */
+#include <public_services/sw_timers.h>
 #include <stdint.h>
-#include "sw_timers.h"
 #include "alarm_module.h"
 
 uint16_t g_SysState = 0;
@@ -49,7 +49,7 @@ IOAlarmJudge(void *input, void *target)
 }
 
 static uint16_t
-IOAlarmRecover(uint16_t input, uint16_t target)
+IOAlarmRecover(void *input, void *target)
 {
 	return (*(int16_t*)input != *(int16_t*)target);
 }
