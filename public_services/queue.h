@@ -1,8 +1,7 @@
 #ifndef _QUEUE_H_
 #define _QUEUE_H_
 
-//#define uint16_t    unsigned short
-//#define int16_t     signed short
+#include <stdint.h>
 
 typedef int16_t     elem_t;
 

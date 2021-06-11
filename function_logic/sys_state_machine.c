@@ -12,13 +12,11 @@
 *
 *********************************************************************************************************
 */
-
-
-#include <function_logic/sys_state_machine.h>
-#include <public_services/state_machine.h>
 #include <stdint.h>
 #include <stdlib.h>
 
+#include <function_logic/sys_state_machine.h>
+#include <state_machine.h>
 
 struct STATE_MACHINE* SysStateMachine;
 
@@ -120,5 +118,9 @@ void SysStateMachineCreate(void)
 	RegisterState(SysStateMachine, DEBUG_TEST, 		SysDebug, 		EntryDebug, 	NULL, Debug2Standby);
 }
 
+void SysStateMachineRun(void)
+{
+    RunStateMachine(SysStateMachine);
+}
 
 

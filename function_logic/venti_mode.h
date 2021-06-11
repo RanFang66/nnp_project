@@ -16,6 +16,7 @@
 #ifndef FUNCTION_LOGIC_VENTI_MODE_H_
 #define FUNCTION_LOGIC_VENTI_MODE_H_
 
+#include <stdint.h>
 
 #define 	VENTI_MODE_NUM		9
 

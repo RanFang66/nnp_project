@@ -287,7 +287,12 @@ extern volatile struct SCI_REGS ScibRegs;
 extern volatile struct SCI_REGS ScicRegs;
 
 
-typedef struct SCI_REGS SCI_TYPE;
+#define Scia    SciaRegs
+#define Scib    ScibRegs
+#define Scic    ScicRegs
+
+typedef volatile struct SCI_REGS SCI_TYPE;
+
 // Function declaration
 extern void  InitSciGpio(enum SCI_GPIO_SEL SciGpio);
 extern void  InitSci(SCI_TYPE *Scix, struct SCI_INIT_TYPE *SciInit, enum SCI_GPIO_SEL gpio);

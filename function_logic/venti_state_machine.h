@@ -16,6 +16,8 @@
 #ifndef FUNCTION_LOGIC_VENTI_STATE_MACHINE_H_
 #define FUNCTION_LOGIC_VENTI_STATE_MACHINE_H_
 
+#include <stdint.h>
+
 #define INSPIRATION			1
 #define EXPIRATION			2
 #define	HOLD_BREATH			3

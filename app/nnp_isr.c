@@ -12,7 +12,7 @@
 *
 *********************************************************************************************************
 */
-#include <app/nnp_project.h>
+#include <nnp_project.h>
 
 interrupt void CpuTimer0Isr(void)
 {
@@ -20,14 +20,16 @@ interrupt void CpuTimer0Isr(void)
 
 	OSIntEnter();
 	OSTimeTick();
+//	ServiceDog();
 	OSIntExit();
 }
-
+struct QUEUE *SciaRecvBuff;
 
 interrupt void SciaReadIsr(void)
 {
 	int len;
 	int i;
+	uint16_t tmp = 0;
 
 	if (SciaRegs.SCIRXST.bit.RXERROR) {
 		SciaRegs.SCIFFRX.bit.RXFFOVRCLR = 1;
@@ -42,8 +44,8 @@ interrupt void SciaReadIsr(void)
 		len = SciaRegs.SCIFFRX.bit.RXFFST;
 		i = 0;
 		while (len > i) {
-//			*Buff = SciaRegs.SCIRXBUF.bit.RXDT;
-//			Buff++;
+		    tmp = SciaRegs.SCIRXBUF.all;
+		    queue_en(SciaRecvBuff, tmp & 0x00ff);
 			i++;
 		}
 	} else {

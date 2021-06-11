@@ -40,6 +40,8 @@ extern "C" {
 							EDIS; \
 						}while (0);
 
+#define UI_SCI_PORT     SCIA_RX28_TX29
+
 #ifdef __cplusplus
 }
 #endif /* extern "C" */

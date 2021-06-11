@@ -13,7 +13,7 @@
 *********************************************************************************************************
 */
 #include <stdint.h>
-#include "sw_timers.h"
+#include <sw_timer.h>
 
 void InitSwTimer(struct SW_TIMER *Timer, uint16_t Tsample, uint16_t Texpire)
 {

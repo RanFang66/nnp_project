@@ -12,7 +12,7 @@
 *
 *********************************************************************************************************
 */
-#include <public_services/state_machine.h>
+#include <state_machine.h>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -21,7 +21,7 @@
 #include "venti_mode.h"
 #include "venti_state_machine.h"
 
-struct STATE_MACHINE* VentiState;
+struct STATE_MACHINE* VentiStateMachine;
 
 static struct VENTI_TIMER VentiTimer;
 
@@ -89,9 +89,14 @@ uint16_t HoldTrans2NewState(void)
 
 void VentiStateMachineCreate(void)
 {
-	VentiState = CreateStateMachine(VENTI_STATES_NUM);
+	VentiStateMachine = CreateStateMachine(VENTI_STATES_NUM);
 
-	RegisterState(VentiState, INSPIRATION, 	VentiInsp, 	EntryInsp,			NULL, InspTrans2NewState);
-	RegisterState(VentiState, EXPIRATION,	VentiExp, 	EntryExp, 			NULL, ExpTrans2NewState);
-	RegisterState(VentiState, HOLD_BREATH, 	HoldBreath, EntryHoldBreath, 	NULL, HoldTrans2NewState);
+	RegisterState(VentiStateMachine, INSPIRATION, 	VentiInsp, 	EntryInsp,			NULL, InspTrans2NewState);
+	RegisterState(VentiStateMachine, EXPIRATION,	VentiExp, 	EntryExp, 			NULL, ExpTrans2NewState);
+	RegisterState(VentiStateMachine, HOLD_BREATH, 	HoldBreath, EntryHoldBreath, 	NULL, HoldTrans2NewState);
+}
+
+void VentiStateMachineRun(void)
+{
+    RunStateMachine(VentiStateMachine);
 }

@@ -53,12 +53,21 @@ extern "C" {
 // Low speed peripheral clock prescale value definition
 #define LOSP_PRE_DIV		0x0002
 
+
+
+
 #define HISP_CLK_HZ			(SYSCLK_FREQ_HZ / (HISP_PRE_DIV + 1))
 #define LOSP_CLK_HZ			(SYSCLK_FREQ_HZ / (LOSP_PRE_DIV + 1))
 
 // Watch dog clock prescaler set
 #define WATCHDOG_CLK_DIV	0x111
-#define WATCHDOG_CLK_KHZ	(SYSCLK_FREQ_HZ >> (8 + WATCHDOG_CLK_DIV))
+#define WATCHDOG_CLK_KHZ	(SYSCLK_FREQ_HZ / 512 / WATCHDOG_CLK_DIV)
+
+// Watch dog Int configuration
+#define WATCHDOG_RESET      0
+#define WATCHDOG_INT        1
+
+#define WATCHDOG_INT_SEL    WATCHDOG_RESET
 
 
 
@@ -130,6 +139,9 @@ extern "C" {
 //
 #define DELAY_US(A)  DSP28x_usDelay(((((long double) A * 1000.0L) / \
         (long double)CPU_RATE) - 9.0L) / 5.0L)
+
+
+
 
 #ifdef __cplusplus
 }

@@ -16,12 +16,15 @@
 #ifndef APP_NNP_PROJECT_H_
 #define APP_NNP_PROJECT_H_
 
+#include "DSP2833x_bsp.h"
+
+#include "ucos_ii.h"
+#include "public_services.h"
+#include "sys_functions.h"
 #include <app/nnp_hardware.h>
 #include <app/nnp_init.h>
 #include <app/nnp_isr.h>
 #include <app/nnp_task_cfg.h>
-#include "DSP2833x_bsp.h"
-#include "ucos_ii.h"
 
 
 #ifdef __cplusplus

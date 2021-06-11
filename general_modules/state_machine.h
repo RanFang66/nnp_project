@@ -13,8 +13,8 @@
 *********************************************************************************************************
 */
 
-#ifndef PUBLIC_SERVICES_STATE_MACHINE_H_
-#define PUBLIC_SERVICES_STATE_MACHINE_H_
+#ifndef GENERAL_MODULES_STATE_MACHINE_H_
+#define GENERAL_MODULES_STATE_MACHINE_H_
 
 #include <stdint.h>
 
@@ -50,4 +50,4 @@ extern int16_t RegisterState(struct STATE_MACHINE *Machine, uint16_t Index, Stat
 extern void RunStateMachine(struct STATE_MACHINE *Machine);
 
 
-#endif /* PUBLIC_SERVICES_STATE_MACHINE_H_ */
+#endif /* GENERAL_MODULES_STATE_MACHINE_H_ */

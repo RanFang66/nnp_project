@@ -12,8 +12,8 @@
 *
 *********************************************************************************************************
 */
-#include <public_services/sw_timers.h>
 #include <stdint.h>
+#include <sw_timer.h>
 #include "alarm_module.h"
 
 uint16_t g_SysState = 0;

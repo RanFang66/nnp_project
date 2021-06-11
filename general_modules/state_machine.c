@@ -13,11 +13,11 @@
 *********************************************************************************************************
 */
 
+#include <state_machine.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 
-#include "state_machine.h"
 
 static void _EntryDefault(void)
 {

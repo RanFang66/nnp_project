@@ -13,8 +13,8 @@
 *********************************************************************************************************
 */
 
-#ifndef PUBLIC_SERVICES_SW_TIMERS_H_
-#define PUBLIC_SERVICES_SW_TIMERS_H_
+#ifndef PUBLIC_SERVICES_SW_TIMER_H_
+#define PUBLIC_SERVICES_SW_TIMER_H_
 #include <stdint.h>
 
 struct SW_TIMER {
@@ -28,4 +28,4 @@ struct SW_TIMER {
 #define SwTimerAcc(Timer)		(Timer.Tcnt += Timer.Tsample)
 
 
-#endif /* PUBLIC_SERVICES_SW_TIMERS_H_ */
+#endif /* PUBLIC_SERVICES_SW_TIMER_H_ */

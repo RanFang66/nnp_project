@@ -162,7 +162,7 @@ InitFlash(void)
 }
 
 void
-InitWatchDog(Uint16 preScale, Uint16 WDIntEn)
+InitWatchDog(Uint16 preScale, Uint16 WDIntSel)
 {
 	EALLOW;						// Enable EALLOW protected register access
 
@@ -175,7 +175,7 @@ InitWatchDog(Uint16 preScale, Uint16 WDIntEn)
 // bit 2-0       000:    WDPS, WD prescale bits, 000: WDCLK=OSCCLK/512/1
 
 	SysCtrlRegs.SCSR = 0x0000;
-	SysCtrlRegs.SCSR |= WDIntEn < 1;
+	SysCtrlRegs.SCSR |= WDIntSel < 1;
 // bit 15-3      0's:    reserved
 // bit 2         0:      WDINTS, WD interrupt status bit (read-only)
 // bit 1         0:      WDENINT, 0=WD causes reset, 1=WD causes WDINT
