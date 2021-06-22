@@ -16,6 +16,7 @@
 #ifndef APP_NNP_PROJECT_H_
 #define APP_NNP_PROJECT_H_
 
+#include <stdio.h>
 #include "DSP2833x_bsp.h"
 
 #include "ucos_ii.h"

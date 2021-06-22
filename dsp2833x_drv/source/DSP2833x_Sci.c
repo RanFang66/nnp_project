@@ -48,15 +48,20 @@
 #include "DSP2833x_Device.h"     // DSP2833x Headerfile Include File
 #include "DSP2833x_bsp.h"
 
-//
-// InitSci - This function initializes the SCI(s) to a known state.
-//
+/**
+ * @name: InitSci
+ * @description: This function initializes the SCI(s) to a known state.
+ * @param {SCI_TYPE} *Scix: SCI module select: can be one of [SCIA, SCIB, SCIC]
+ * @param {struct SCI_INIT_TYPE} *SciInit: SCI module initialization structure
+ * @param {enum SCI_GPIO_SEL} Gpio: SCI gpio select, can be one of [SCIA_RX28_TX29, SCIB_RX19_TX18, SCIC_RX62_TX63]
+ * @return {void}
+ */
 void 
-InitSci(SCI_TYPE *Scix, struct SCI_INIT_TYPE *SciInit, enum SCI_GPIO_SEL gpio)
+InitSci(SCI_TYPE *Scix, struct SCI_INIT_TYPE *SciInit, enum SCI_GPIO_SEL Gpio)
 {
     Uint32  brr;
 
-    InitSciGpio(gpio);
+    InitSciGpio(Gpio);
 
 
     Scix->SCICTL1.bit.SWRESET = 0;
@@ -103,20 +108,12 @@ InitSci(SCI_TYPE *Scix, struct SCI_INIT_TYPE *SciInit, enum SCI_GPIO_SEL gpio)
 }	
 
 
-
-//
-// InitSciGpio - This function initializes GPIO to function as SCI-A, SCI-B, or
-// SCI-C
-//
-// Each GPIO pin can be configured as a GPIO pin or up to 3 different
-// peripheral functional pins. By default all pins come up as GPIO
-// inputs after reset.  
-// 
-// Caution: 
-// Only one GPIO pin should be enabled for SCITXDA/B operation.
-// Only one GPIO pin shoudl be enabled for SCIRXDA/B operation. 
-// Comment out other unwanted lines.
-//
+/**
+ * @name: InitSciGpio
+ * @description: Initialize SCI module's GPIO
+ * @param {enum SCI_GPIO_SEL} SciGpio: SCI GPIO select, can be one of [SCIA_RX28_TX29, SCIB_RX19_TX18, SCIC_RX62_TX63]
+ * @return {void}
+ */
 void 
 InitSciGpio(enum SCI_GPIO_SEL SciGpio)
 {
@@ -263,7 +260,17 @@ InitScicGpio()
 }
 #endif // if DSP28_SCIC 
 
-
+/**
+ * @name: SciReadPoll
+ * @description: read data from SCI, if there is no data recieved from SCI, will return a error code
+ * @param {SCI_TYPE} *Scix: SCI module select: can be one of [SCIA, SCIB, SCIC]
+ * @param {Uint16} *Buff: read buffer to save data
+ * @param {Uint16} Num: number of read bytes
+ * @return {int16} read results:
+ *                 if read data ok, return the number of bytes actually read;
+ *                 if SCI error occured, return error code -1;
+ *                 if no data received, return error code -2.                  
+ */
 int16 SciReadPoll(SCI_TYPE *Scix, Uint16 *Buff, Uint16 Num)
 {
 	int len;
@@ -294,6 +301,16 @@ int16 SciReadPoll(SCI_TYPE *Scix, Uint16 *Buff, Uint16 Num)
 }
 
 
+/**
+ * @name: SciWriteBlock 
+ * @description: send data through SCI, this function will block the process 
+ * @param {SCI_TYPE} *Scix: SCI module select: can be one of [SCIA, SCIB, SCIC]
+ * @param {const Uint16} *Buff: send buffer
+ * @param {Uint16} Num: number of bytes to send
+ * @return {int16} write results:
+ *                 if write data ok, return the number of bytes actually read;
+ *                 if SCI error occured, return error code -1;    
+ */
 int16 SciWriteBlock(SCI_TYPE *Scix, const Uint16 *Buff, Uint16 Num)
 {
 	int len = 0;

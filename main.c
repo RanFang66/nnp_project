@@ -12,11 +12,11 @@
 *
 *********************************************************************************************************
 */
-#include  <nnp_project.h>
-#include  <ucos_ii.h>
-#include  <cpu_core.h>
-#include  <lib_def.h>
-#include  <os_cpu.h>
+#include "nnp_project.h"
+#include <ucos_ii.h>
+#include <cpu_core.h>
+#include <lib_def.h>
+#include <os_cpu.h>
 
 CPU_STK_SIZE  		TaskStartStk[START_TASK_STK_SIZE];
 CPU_STK_SIZE        TaskSysCtrlStk[SYS_CTRL_STK_SIZE];
@@ -179,10 +179,23 @@ static void TaskParaMonitor(void  *p_arg)
     }
 }
 
+uint16_t RecvBuff[16] = {0};
+uint16_t SendBuff[16] = {0};
 static void TaskUiComm(void *p_arg)
 {
+    int16_t RecvCnt = 0;
+    int16_t i = 0;
+    int16_t count = 0;
     while (1) {
         CurTaskId = 6;
-        OSTimeDly(3);
+
+        if (RecvCnt = SciReadPoll(Scia, RecvBuff, 10) > 0) {
+            for (i = 0; i < RecvCnt; i++) {
+                SendBuff[i] = RecvBuff[i];
+            }
+            SciWriteBlock(Scia, SendBuff, RecvCnt);
+        }
+        printf("%s:%5d: this is %d times I enter this task.\n", __FILE__, __LINE__, count);
+        OSTimeDly(10);
     }
 }

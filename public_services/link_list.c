@@ -88,15 +88,15 @@ state_t list_insert(list_t l, elem_t d, pos_t p)
     return NO_ERR;
 }
 
-//void list_print(list_t l)
-//{
-//    pos_t p = l->next;
-//    while (p != NULL) {
-//        printf("%d \t", p->data);
-//        p = p->next;
-//    }
-//    printf("\n");
-//}
+void list_print(list_t l)
+{
+    pos_t p = l->next;
+    while (p != NULL) {
+        printf("%d \t", p->data);
+        p = p->next;
+    }
+    printf("\n");
+}
 
 void list_clear(list_t l)
 {

@@ -287,9 +287,9 @@ extern volatile struct SCI_REGS ScibRegs;
 extern volatile struct SCI_REGS ScicRegs;
 
 
-#define Scia    SciaRegs
-#define Scib    ScibRegs
-#define Scic    ScicRegs
+#define Scia    &SciaRegs
+#define Scib    &ScibRegs
+#define Scic    &ScicRegs
 
 typedef volatile struct SCI_REGS SCI_TYPE;
 
