@@ -254,9 +254,10 @@ enum ParitySel {
 
 #define SCI_RX_EN				1u
 #define SCI_TX_EN				2u
-#define SCI_RX_INT_EN  			4u
-#define SCI_TX_INT_EN 			8u
-#define SCI_RXBRK_INT_EN		16u
+
+#define SCI_RX_INT_EN  			1u
+#define SCI_TX_INT_EN 			2u
+#define SCI_RXBRK_INT_EN		4u
 
 #define SCI_FIFO_EN				1u
 #define SCI_RX_FIFO_INT_EN 		2u
@@ -266,12 +267,15 @@ enum ParitySel {
 #define SCI_ERROR				1
 #define SCI_NO_DATA				2
 
-#define SCI_WRITE_NUM_MAX		32
+#define SCI_WRITE_NUM_MAX		16u
+#define SCI_READ_NUM_MAX	 	16u
+#define SCI_MSG_MAX				64u
 
 struct SCI_INIT_TYPE {
 	Uint16	DataBits;
 	Uint16  StopBits;
 	enum ParitySel	Parity;
+	Uint16  SciEn;
 	Uint16  SciIntSel;
 	Uint16  SciFifoMode;
 	Uint32	Baudrate;
@@ -291,14 +295,20 @@ extern volatile struct SCI_REGS ScicRegs;
 #define Scib    &ScibRegs
 #define Scic    &ScicRegs
 
+#define SCI_FIFO_LEVEL		16u
+
 typedef volatile struct SCI_REGS SCI_TYPE;
 
 // Function declaration
 extern void  InitSciGpio(enum SCI_GPIO_SEL SciGpio);
 extern void  InitSci(SCI_TYPE *Scix, struct SCI_INIT_TYPE *SciInit, enum SCI_GPIO_SEL gpio);
-extern int16 SciReadPoll(SCI_TYPE *Scix, Uint16 *Buff, Uint16 Num);
+extern int16 SciReadBlock(SCI_TYPE *Scix, Uint16 *Buff, Uint16 Num);
 extern int16 SciWriteBlock(SCI_TYPE *Scix, const Uint16 *Buff, Uint16 Num);
+extern int16 SciSendMsg(SCI_TYPE *Scix, const char *msg);
+extern Uint16 SciRecvByte(SCI_TYPE *Scix);
+extern void   SciSendByte(SCI_TYPE *Scix, int16 Byte);
 
+extern void InitSciaGpio();
 #ifdef __cplusplus
 }
 #endif /* extern "C" */

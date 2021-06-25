@@ -48,16 +48,16 @@ extern "C" {
 
 
 // High speed peripheral clock prescale value definition
-#define HISP_PRE_DIV		0x0001
+#define HISP_PRE_DIV		0x0002
 
 // Low speed peripheral clock prescale value definition
-#define LOSP_PRE_DIV		0x0002
+#define LOSP_PRE_DIV		0x0004
 
 
 
 
-#define HISP_CLK_HZ			(SYSCLK_FREQ_HZ / (HISP_PRE_DIV + 1))
-#define LOSP_CLK_HZ			(SYSCLK_FREQ_HZ / (LOSP_PRE_DIV + 1))
+#define HISP_CLK_HZ			(SYSCLK_FREQ_HZ / (HISP_PRE_DIV))
+#define LOSP_CLK_HZ			(SYSCLK_FREQ_HZ / (LOSP_PRE_DIV))
 
 // Watch dog clock prescaler set
 #define WATCHDOG_CLK_DIV	0x111

@@ -38,6 +38,7 @@ static void TaskUiComm(void *p_arg);
 
 int main(void)
 {
+#if UNIT_TEST_EN == 0
 	// Initialize Board
     InitDSP2833x();
 
@@ -56,7 +57,10 @@ int main(void)
 				   (INT16U   )(OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR));
 	// Run uCos
 	OSStart();
-
+#else
+	Test_InitDsp28335();
+	Test_RunTest();
+#endif
 	return 0;
 }
 
@@ -179,23 +183,12 @@ static void TaskParaMonitor(void  *p_arg)
     }
 }
 
-uint16_t RecvBuff[16] = {0};
-uint16_t SendBuff[16] = {0};
 static void TaskUiComm(void *p_arg)
 {
-    int16_t RecvCnt = 0;
-    int16_t i = 0;
-    int16_t count = 0;
+
     while (1) {
         CurTaskId = 6;
 
-        if (RecvCnt = SciReadPoll(Scia, RecvBuff, 10) > 0) {
-            for (i = 0; i < RecvCnt; i++) {
-                SendBuff[i] = RecvBuff[i];
-            }
-            SciWriteBlock(Scia, SendBuff, RecvCnt);
-        }
-        printf("%s:%5d: this is %d times I enter this task.\n", __FILE__, __LINE__, count);
         OSTimeDly(10);
     }
 }

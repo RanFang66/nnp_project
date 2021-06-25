@@ -82,7 +82,7 @@ InitSysCtrl(Uint16 SysClkPreMulti, Uint16 SysClkPreDiv, Uint16 HispClkDiv, Uint1
     // Initialize the PLL control: PLLCR and DIVSEL
     // DSP28_PLLCR and DSP28_DIVSEL are defined in DSP2833x_Examples.h
     //
-    InitPll(SysClkPreMulti, SysClkPreDiv);
+    InitPll(SysClkPreMulti >> 1, SysClkPreDiv >> 1);
 
     //
     // Initialize the peripheral clocks

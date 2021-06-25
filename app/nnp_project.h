@@ -22,6 +22,7 @@
 #include "ucos_ii.h"
 #include "public_services.h"
 #include "sys_functions.h"
+#include "uni_test/uni_test.h"
 #include <app/nnp_hardware.h>
 #include <app/nnp_init.h>
 #include <app/nnp_isr.h>

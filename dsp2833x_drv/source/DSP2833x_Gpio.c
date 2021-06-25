@@ -94,9 +94,9 @@ InitGpio(void)
     GpioCtrlRegs.GPAPUD.all = 0x0000;      // Pullup's enabled GPIO0-GPIO31
     GpioCtrlRegs.GPBPUD.all = 0x0000;      // Pullup's enabled GPIO32-GPIO63
     GpioCtrlRegs.GPCPUD.all = 0x0000;      // Pullup's enabled GPIO64-GPIO79
-    //GpioCtrlRegs.GPAPUD.all = 0xFFFF;    // Pullup's disabled GPIO0-GPIO31
-    //GpioCtrlRegs.GPBPUD.all = 0xFFFF;    // Pullup's disabled GPIO32-GPIO34
-    //GpioCtrlRegs.GPCPUD.all = 0xFFFF;    // Pullup's disabled GPIO64-GPIO79
+    GpioCtrlRegs.GPAPUD.all = 0xFFFF;    // Pullup's disabled GPIO0-GPIO31
+    GpioCtrlRegs.GPBPUD.all = 0xFFFF;    // Pullup's disabled GPIO32-GPIO34
+    GpioCtrlRegs.GPCPUD.all = 0xFFFF;    // Pullup's disabled GPIO64-GPIO79
 
     EDIS;
 }	
@@ -230,7 +230,7 @@ ConfigGpio(Uint16 GpioNum, Gpio_Mode_Type GpioMode, Uint16 PullUpEn, Gpio_QSel_T
 			*GpioQSel &= ~((Uint32)1 << shift2);
 			*GpioQSel |= ((Uint32)1 << (shift2+1));
 		} else if (GPIO_ASYNC) {
-			*GpioQSel |= ((Uint32)1 << shift2);
+			*GpioQSel |= ((Uint32)3 << shift2);
 		} else {
 			return GPIO_INVALID_QUA;
 		}

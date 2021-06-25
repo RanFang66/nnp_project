@@ -66,7 +66,7 @@ InitSci(SCI_TYPE *Scix, struct SCI_INIT_TYPE *SciInit, enum SCI_GPIO_SEL Gpio)
 
     Scix->SCICTL1.bit.SWRESET = 0;
 
-    Scix->SCICCR.bit.STOPBITS = SciInit->StopBits;
+    Scix->SCICCR.bit.STOPBITS = SciInit->StopBits - 1;
     if (SciInit->Parity == ODD_PARITY) {
     	Scix->SCICCR.bit.PARITY = 0;
     	Scix->SCICCR.bit.PARITYENA = 1;
@@ -78,12 +78,12 @@ InitSci(SCI_TYPE *Scix, struct SCI_INIT_TYPE *SciInit, enum SCI_GPIO_SEL Gpio)
     	Scix->SCICCR.bit.PARITYENA = 0;
     }
 
-    Scix->SCICCR.bit.SCICHAR = SciInit->DataBits;
+    Scix->SCICCR.bit.SCICHAR = SciInit->DataBits - 1;
     Scix->SCICCR.bit.LOOPBKENA = 0;
     Scix->SCICCR.bit.ADDRIDLE_MODE = 0;
 
-    Scix->SCICTL1.bit.RXENA = SciInit->SciIntSel & SCI_RX_EN ? 1 : 0;             		// enable RX
-    Scix->SCICTL1.bit.TXENA = SciInit->SciIntSel & SCI_TX_EN ? 1 : 0;               	// enable TX
+    Scix->SCICTL1.bit.RXENA = SciInit->SciEn & SCI_RX_EN ? 1 : 0;             		// enable RX
+    Scix->SCICTL1.bit.TXENA = SciInit->SciEn & SCI_TX_EN ? 1 : 0;               	// enable TX
     Scix->SCICTL1.bit.RXERRINTENA = SciInit->SciIntSel & SCI_RX_INT_EN ? 1 : 0;        // enable RX error interrupt
     Scix->SCICTL2.bit.TXINTENA = SciInit->SciIntSel & SCI_TX_INT_EN ? 1: 0;            // disable TX interrupt
     Scix->SCICTL2.bit.RXBKINTENA = SciInit->SciIntSel & SCI_RXBRK_INT_EN ? 1 : 0;      // enable RX break interrupt
@@ -91,8 +91,8 @@ InitSci(SCI_TYPE *Scix, struct SCI_INIT_TYPE *SciInit, enum SCI_GPIO_SEL Gpio)
 
     // set baud rate of SCI
     brr = LOSP_CLK_HZ / (SciInit->Baudrate * 8) - 1;
-    Scix->SCIHBAUD = (Uint16)(brr >> 16);
-    Scix->SCILBAUD = (Uint16)(brr & 0x0000FFFF);
+    Scix->SCIHBAUD = (Uint16)((brr & 0x0000FF00) >> 8);
+    Scix->SCILBAUD = (Uint16)(brr & 0x000000FF);
 
 
     Scix->SCIFFTX.bit.SCIFFENA = SciInit->SciFifoMode & SCI_FIFO_EN ? 1 : 0;
@@ -105,7 +105,73 @@ InitSci(SCI_TYPE *Scix, struct SCI_INIT_TYPE *SciInit, enum SCI_GPIO_SEL Gpio)
     Scix->SCIFFCT.bit.FFTXDLY = 0;
     Scix->SCIFFCT.bit.ABD = 0;
     Scix->SCIFFCT.bit.CDC = 0;
+
+	Scix->SCIFFRX.bit.RXFFOVRCLR = 1;
+	Scix->SCIFFRX.bit.RXFFINTCLR = 1;
+    Scix->SCIFFRX.bit.RXFIFORESET = 1;
+    Scix->SCIFFTX.bit.TXFIFOXRESET = 1;
+    Scix->SCIFFTX.bit.SCIRST = 1;
+    Scix->SCICTL1.bit.SWRESET = 1;
 }	
+
+
+//EALLOW;
+//
+////
+//// Enable internal pull-up for the selected pins
+//// Pull-ups can be enabled or disabled disabled by the user.
+//// This will enable the pullups for the specified pins.
+////
+//GpioCtrlRegs.GPAPUD.bit.GPIO28 = 0;  // Enable pull-up for GPIO28 (SCIRXDA)
+//GpioCtrlRegs.GPAPUD.bit.GPIO29 = 0;	 // Enable pull-up for GPIO29 (SCITXDA)
+//
+////
+//// Set qualification for selected pins to asynch only
+//// Inputs are synchronized to SYSCLKOUT by default.
+//// This will select asynch (no qualification) for the selected pins.
+////
+//GpioCtrlRegs.GPAQSEL2.bit.GPIO28 = 3;  // Asynch input GPIO28 (SCIRXDA)
+//
+////
+//// Configure SCI-A pins using GPIO regs
+//// This specifies which of the possible GPIO pins will be SCI functional
+//// pins.
+////
+//GpioCtrlRegs.GPAMUX2.bit.GPIO28 = 1;   // Configure GPIO28 to SCIRXDA
+//GpioCtrlRegs.GPAMUX2.bit.GPIO29 = 1;   // Configure GPIO29 to SCITXDA
+//
+//EDIS;
+//
+//SciaRegs.SCIFFTX.all=0xE068;
+//SciaRegs.SCIFFRX.all=0x204f;
+//SciaRegs.SCIFFCT.all=0x0;
+////
+//// Note: Clocks were turned on to the SCIA peripheral
+//// in the InitSysCtrl() function
+////
+//
+//// 1 stop bit,  No loopback, No parity,8 char bits,
+//// async mode, idle-line protocol
+////
+//SciaRegs.SCICCR.all =0x0007;
+//
+////
+//// enable TX, RX, internal SCICLK,
+//// Disable RX ERR, SLEEP, TXWAKE
+////
+//SciaRegs.SCICTL1.all =0x0003;
+//SciaRegs.SCICTL2.all =0x0003;
+//SciaRegs.SCICTL2.bit.TXINTENA =0;
+//SciaRegs.SCICTL2.bit.RXBKINTENA =0;
+//#if (CPU_FRQ_150MHZ)
+//SciaRegs.SCIHBAUD    =0x0001;  // 9600 baud @LSPCLK = 37.5MHz.
+//SciaRegs.SCILBAUD    =0x00E7;
+//#endif
+//#if (CPU_FRQ_100MHZ)
+//SciaRegs.SCIHBAUD    =0x0001;  // 9600 baud @LSPCLK = 20MHz.
+//SciaRegs.SCILBAUD    =0x0044;
+//#endif
+//SciaRegs.SCICTL1.all =0x0023;  // Relinquish SCI from Reset
 
 
 /**
@@ -260,6 +326,15 @@ InitScicGpio()
 }
 #endif // if DSP28_SCIC 
 
+
+Uint16 SciRecvByte(SCI_TYPE *Scix)
+{
+	while ( 0 == Scix->SCIFFRX.bit.RXFFST) {
+		;
+	}
+	return Scix->SCIRXBUF.all;
+}
+
 /**
  * @name: SciReadPoll
  * @description: read data from SCI, if there is no data recieved from SCI, will return a error code
@@ -271,10 +346,9 @@ InitScicGpio()
  *                 if SCI error occured, return error code -1;
  *                 if no data received, return error code -2.                  
  */
-int16 SciReadPoll(SCI_TYPE *Scix, Uint16 *Buff, Uint16 Num)
+int16 SciReadBlock(SCI_TYPE *Scix, Uint16 *Buff, Uint16 Num)
 {
-	int len;
-	int i = 0;
+	int RecvCnt = 0;
 
 	if (Scix->SCIRXST.bit.RXERROR) {
 		Scix->SCIFFRX.bit.RXFFOVRCLR = 1;
@@ -286,20 +360,30 @@ int16 SciReadPoll(SCI_TYPE *Scix, Uint16 *Buff, Uint16 Num)
 
 		Scix->SCICTL1.bit.SWRESET = 1;
 		return -SCI_ERROR;
-	} else if (Scix->SCIFFRX.bit.RXFFST > 0) {
-		len = Scix->SCIFFRX.bit.RXFFST;
-		while (len > i) {
-			*Buff = Scix->SCIRXBUF.bit.RXDT;
-			Buff++;
-			i++;
-		}
-		return len;
-	} else {
-		return -SCI_NO_DATA;
 	}
-	
+
+	if (Num > SCI_READ_NUM_MAX) {
+		Num = SCI_READ_NUM_MAX;
+	}
+
+
+	while (RecvCnt < Num) {
+		Buff[RecvCnt] = SciRecvByte(Scix);
+		RecvCnt++;
+	}
+	return RecvCnt;
 }
 
+
+void
+SciSendByte(SCI_TYPE *Scix, int16 Byte)
+{
+    while (Scix->SCIFFTX.bit.TXFFST != 0)
+    {
+    	;
+    }
+    Scix->SCITXBUF = Byte;
+}
 
 /**
  * @name: SciWriteBlock 
@@ -319,15 +403,29 @@ int16 SciWriteBlock(SCI_TYPE *Scix, const Uint16 *Buff, Uint16 Num)
 		Num = SCI_WRITE_NUM_MAX;
 
 
+	while (Scix->SCIFFTX.bit.TXFFST > 0) {
+		;			// wait
+	}
 	while (len < Num) {
-		while (Scix->SCIFFTX.bit.TXFFIL - Scix->SCIFFTX.bit.TXFFST > 0) {
-			Scix->SCITXBUF = *(Buff+len);
-			len++;
-		}
+		Scix->SCITXBUF = Buff[len];
+		len++;
 	}
 	return len;
 }
 
+int16 SciSendMsg(SCI_TYPE *Scix, const char *msg)
+{
+	Uint16 i = 0;
+	while ('\0' != msg[i]) {
+		SciSendByte(Scix, msg[i]);
+		i++;
+		if (i > SCI_MSG_MAX) {
+			break;
+		}
+	}
+	SciSendByte(Scix, '\0');
+	return i + 1;
+}
 
 //
 // End of file

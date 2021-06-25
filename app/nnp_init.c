@@ -23,7 +23,7 @@ void InitDSP2833x(void)
 {
 	InitSysCtrl(DSP28_PLLCR, DSP28_DIVSEL, HISP_PRE_DIV, LOSP_PRE_DIV);
 	InitGpio();
-//	setvbuf(stdout, NULL, _IONBF, 0);
+
 	nnp_SciInit();
 //	InitWatchDog(WATCHDOG_CLK_DIV, WATCHDOG_INT_SEL);
 //	EnableDog(WATCHDOG_CLK_DIV);
@@ -46,8 +46,9 @@ nnp_SciInit(void)
     SciInit.DataBits = 8;
     SciInit.StopBits = 1;
     SciInit.Parity = NO_PARITY;
-    SciInit.SciFifoMode = SCI_FIFO_EN;// | SCI_RX_FIFO_INT_EN;
-    SciInit.SciIntSel = SCI_RX_EN | SCI_TX_EN;// | SCI_RX_INT_EN | SCI_RXBRK_INT_EN;
+    SciInit.SciEn = SCI_RX_EN | SCI_TX_EN;
+    SciInit.SciFifoMode = SCI_FIFO_EN;
+    SciInit.SciIntSel = SCI_RX_EN | SCI_TX_EN;
     SciInit.SciRxFifoLevel = 8;
     SciInit.SciTxFifoLevel = 8;
 
